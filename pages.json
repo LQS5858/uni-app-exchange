@@ -1,0 +1,25 @@
+{
+	"pages": [
+		{
+			"path": "pages/main/index"
+		},
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "路由传餐"
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "登录也"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#0D183B",
+		"backgroundColor": "#FFFFFF"
+	}
+}

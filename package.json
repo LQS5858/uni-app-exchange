@@ -1,0 +1,21 @@
+{
+  "name": "weixin-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bignumber.js": "^9.0.1",
+    "lodash": "^4.17.20",
+    "moment": "^2.29.0",
+    "node-rsa": "^1.1.1",
+    "pako": "^1.0.11",
+    "uni-simple-router": "^1.5.5",
+    "vue-i18n": "^8.21.1",
+    "vue-ripple-directive": "^2.0.1"
+  }
+}

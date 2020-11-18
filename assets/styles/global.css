@@ -1,0 +1,27 @@
+@import 'font/iconfont.css';
+:root {
+  --sell-color: #FF2D55;
+  --page-bg-color: #0a122d;
+  --dark-theme-bg: #0d183b;
+}
+:export {
+  sellBtnColor: #FF2D55;
+  pageBgColor: #0a122d;
+  darkThemeBg: #0d183b;
+}
+.pointer {
+  cursor: pointer;
+}
+.pos-as {
+  position: absolute;
+}
+.pos-fix {
+  position: fixed;
+}
+.flex {
+  display: flex;
+}
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}

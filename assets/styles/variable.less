@@ -1,0 +1,18 @@
+// css变量 微信小程序不支持
+// :root {
+//     --sell-color: #FF2D55;
+//     --page-bg-color: #0a122d;
+//     --dark-theme-bg: #0d183b;
+// }
+
+// less变量推荐使用
+@sellBtnColor: #FF2D55; //导出less变量给js使用
+@pageBgColor: #0a122d;
+@darkThemeBg: #0d183b;
+
+
+:export {
+    sellBtnColor: @sellBtnColor; //导出less变量给js使用
+    pageBgColor: @pageBgColor;
+    darkThemeBg: @darkThemeBg;
+}
