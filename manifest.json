@@ -46,5 +46,9 @@
         "setting" : {
             "urlCheck" : true
         }
+    },
+    "h5" : {
+        "title" : "weixin-demo",
+        "domain" : "m.bituan.pro"
     }
 }
