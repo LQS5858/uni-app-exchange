@@ -7,11 +7,13 @@ import i18n from './locale'
 import Filters from './assets/js/filters'
 import cache from './utils/cache'
 import Bus from './assets/js/bus'
+import ListNetWork from "@/components/com/list-network";
 import _ from 'lodash'
 import Utils from '@/utils'
 import { RouterMount } from 'uni-simple-router'
 import RippleDirective from 'vue-ripple-directive'
 Vue.use(cache)
+Vue.use(ListNetWork)
 Vue.directive('ripple', RippleDirective);
 RippleDirective.color = 'rgba(0, 0, 0, 0.2)'; //自定义水波纹颜色
 

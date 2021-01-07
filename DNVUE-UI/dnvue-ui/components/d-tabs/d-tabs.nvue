@@ -1,0 +1,236 @@
+<template>
+	<scroll-view :style="{width:`${tabWidth}rpx`}" :class="['row-'+tabMode,'bg-'+tabBg,border]" :scroll-left="scrollLeft"
+	 :scroll-x="true" :show-scrollbar="false" scroll-with-animation>
+		<d-column :flex="divide?'1':'0'">
+			<d-row>
+				<d-row @click="change(index)" :flex="divide?'1':'0'" v-for="(item,index) in list" :id="'d-tab-item-' + item.uuid"
+				 :key="index">
+					<d-text flex="1" :color="index == currentIndex?activeColor:inactiveColor" align="center" :size="fontSize" :bold="bold?index == currentIndex:null"
+					 :padding="tabPadding" :text="item.name"></d-text>
+				</d-row>
+			</d-row>
+			<d-row :show="barShow" :height="barHeight">
+				<d-row :class="['bar-'+barDuration]" :radius="barHeight" :show="barFirstTime" :style-custom="{'transform': `translateX(${this.scrollBarLeft}px)`}"
+				 :width="barWidth" :height="barHeight" :bg="barBg"></d-row>
+			</d-row>
+		</d-column>
+	</scroll-view>
+</template>
+
+<script>
+	import tool from "../../tool/tools.js";
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 优化初始化显示底部bar错位的情况
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * tabs 选项卡布局
+	 * @description 选项卡组件
+	 * @tutorial 
+	 * @property {Array} list 数据源，数据结构示例：[{name:"电影"},{name:"电视剧"},{name:"动漫"}]
+	 * @property {String, Number} tab-width tab总宽度
+	 * @property {String} tab-border tab边框颜色(class)
+	 * @property {String} active-color 选中文本颜色
+	 * @property {String} inactive-color 未选中文本颜色
+	 * @property {String, Number} font-size 文本大小
+	 * @property {Boolean} bold 激活项是否加粗
+	 * @property {String} tab-mode tab布局类型
+	 * @property {String} tab-bg tab背景色
+	 * @property {Boolean} divide 是否平分布局
+	 * @property {String, Number} current 当前活动下标
+	 * @property {Array} tab-padding 选项卡内边距
+	 * @property {String, Number} bar-width bar宽度
+	 * @property {String, Number} bar-height bar高度
+	 * @property {String} bar-bg bar背景色
+	 * @property {Boolean} bar-show 控制显示或者隐藏bar
+	 * @property {Number, String} bar-duration bar动画持续时间（0~10）
+	 */
+	export default {
+		name: "dTabs",
+		props: {
+			list: {
+				type: Array, //数据源
+				default: function() {
+					return []
+				}
+			},
+			tabWidth: {
+				type: [String, Number], //tab总宽度
+				default: 750
+			},
+			tabBorder: {
+				type: String, //tab边框颜色(class)
+				default: ''
+			},
+			activeColor: {
+				type: String, //选中文本颜色
+				default: 'theme'
+			},
+			inactiveColor: {
+				type: String, //未选中文本颜色
+				default: 'main'
+			},
+			fontSize: {
+				type: [String, Number], //文本大小
+				default: 30
+			},
+			bold: {
+				type: Boolean, //是否加粗
+				default: true
+			},
+			tabMode: {
+				type: String, //tab布局类型
+				default: 'start'
+			},
+			tabBg: {
+				type: String, //tab背景色
+				default: ''
+			},
+			divide: {
+				type: Boolean, //是否平分布局
+				default: false
+			},
+			current: {
+				type: [String, Number], //当前活动下标
+				default: 0
+			},
+			tabPadding: {
+				type: Array, //选项卡内边距
+				default: function() {
+					return [24, 24, 18]
+				}
+			},
+			barWidth: {
+				type: [String, Number], //bar宽度
+				default: '40'
+			},
+			barHeight: {
+				type: [String, Number], //bar高度
+				default: '6'
+			},
+			barBg: {
+				type: String, //bar背景色
+				default: 'theme'
+			},
+			barShow: {
+				type: Boolean, //控制显示或者隐藏bar
+				default: true
+			},
+			barDuration: {
+				type: [Number, String], //bar动画持续时间（0~10）
+				default: 3
+			}
+		},
+		data() {
+			return {
+				scrollLeft: 0, //设置横向滚动条位置
+				tabsListInfo: [], //tabs的所有item的布局信息
+				currentIndex: this.current, //当前活动下标
+				scrollBarLeft: 0,
+				barFirstTime: false
+			}
+		},
+		watch: {
+			current: {
+				handler(newVal, oldVal) {
+					this.$nextTick(() => {
+						this.currentIndex = newVal;
+						if (this.barFirstTime) {
+							this.scrollCenter();
+						};
+					});
+				},
+				immediate: true,
+			}
+		},
+		created() {
+			//给每个item添加上一个唯一标识id
+			for (let i in this.list) {
+				this.list[i].uuid = tool.uuid();
+			};
+		},
+		mounted() {
+			//延迟获取item布局信息，不延迟获取不到。
+			setTimeout(() => {
+				this.getTabListItem();
+			}, 100);
+		},
+		methods: {
+			change(index) {
+				if (index == this.currentIndex) return;
+				this.$emit("change", {
+					index: index,
+					detail: this.list[index]
+				});
+			},
+			//获取所有item布局信息
+			getTabListItem() {
+				const query = uni.createSelectorQuery().in(this);
+				for (let i in this.list) {
+					query.select(`#d-tab-item-${this.list[i].uuid}`).fields({
+						size: true,
+						rect: true
+					});
+				};
+				// 执行查询，获取多个查询item布局信息结果
+				query.exec(
+					function(data) {
+						this.tabsListInfo = data;
+						this.scrollCenter();
+					}.bind(this)
+				);
+			},
+			//计算tabItem处于屏幕的中间位置距离
+			scrollCenter() {
+				let tabInfo = this.tabsListInfo[this.currentIndex];
+				//当tabInfo信息没有获取到，则不再往下走
+				if (tabInfo == undefined) return;
+				//tabs宽度
+				let centerWidth = uni.upx2px(this.tabWidth);
+				//激活项前宽度总和
+				let currentWidthNum = 0;
+				//未激活项前宽度总和
+				let afterWidthNum = 0;
+				for (let i in this.tabsListInfo) {
+					//激活项
+					if (i <= this.currentIndex) {
+						currentWidthNum += this.tabsListInfo[i].width;
+					};
+					//未激活项
+					if (i > this.currentIndex) {
+						afterWidthNum += this.tabsListInfo[i].width;
+					};
+				};
+				//获取tabs宽度，计算当前选中项之前的宽度总和，计算需移动距离
+				if (centerWidth / 2 <= currentWidthNum && centerWidth / 2 <= afterWidthNum) {
+					this.scrollLeft = currentWidthNum - centerWidth / 2
+				} else if (centerWidth / 2 < currentWidthNum && centerWidth / 2 > afterWidthNum) {
+					//当到达最右边时候
+					this.scrollLeft = currentWidthNum + afterWidthNum;
+				} else {
+					this.scrollLeft = 0;
+				};
+				//bar可移动距离
+				this.scrollBarLeft = tabInfo.left + (tabInfo.width - uni.upx2px(this.barWidth)) / 2 - this.tabsListInfo[0].left;
+				//当第一次加载组件时，bar首先是隐藏然后加载完成后再显示
+				if (this.barFirstTime == false) {
+					this.barFirstTime = true;
+				};
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	@for $i from 0 to 11 {
+		.bar-#{$i} {
+			transition-property: transform;
+			transition-duration: 0.1s * $i;
+		}
+	}
+</style>

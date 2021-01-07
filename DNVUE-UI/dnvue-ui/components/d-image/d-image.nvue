@@ -1,0 +1,227 @@
+<template>
+	<view :style="{style_image}" v-if="show">
+		<image @click="click" @longpress="longpress" :lazy-load="lazyLoad" :fade-show="fadeShow" :mode="mode" @error="error"
+		 @load="load" :src="imageSrc" :style="style_image"></image>
+	</view>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.添加 is-gif 属性，判断当前是否为gif图，如果为gif需填写参数 true
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * image 图片
+	 * @description 图片组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示或者隐藏
+	 * @property {Boolean} is-gif 判断当前图片是否为gif图
+	 * @property {String} bg-custom 自定义图片背景色，示例 "#000000"
+	 * @property {String} src 图片地址
+	 * @property {Number, String} width 宽度
+	 * @property {Number, String} height 高度
+	 * @property {String, Number,Arrar} size 图片尺寸
+	 * @property {Array} radius 圆角
+	 * @property {String} mode = [scaleToFill|aspectFit|aspectFill|widthFix|heightFix] 图片裁剪、缩放的模式
+	 *  @value scaleToFill 不保持纵横比缩放图片，使图片的宽高完全拉伸至填满 image 元素
+	 *  @value aspectFit 保持纵横比缩放图片，使图片的长边能完全显示出来。也就是说，可以完整地将图片显示出来。
+	 *  @value aspectFill 保持纵横比缩放图片，只保证图片的短边能完全显示出来。也就是说，图片通常只在水平或垂直方向是完整的，另一个方向将会发生截取。
+	 *  @value widthFix 宽度不变，高度自动变化，保持原图宽高比不变
+	 *  @value heightFix 高度不变，宽度自动变化，保持原图宽高比不变
+	 * @property {String} error-src 加载失败图片
+	 * @property {String} before-src 加载之前图片
+	 * @property {Boolean} fade-show 图片显示动画效果(仅App-nvue 2.3.4+ Android有效)
+	 * @property {Boolean} stop 阻止事件冒泡
+	 * @property {Boolean} lazy-load 图片懒加载。只针对page与scroll-view下的image有效
+	 * @property {String} unit = [px|rpx] 宽高单位，默认rpx
+	 * @property {Object} style-custom 自定义组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+	 * @event {Function()} click 点击事件
+	 * @event {Function()} longpress 长按事件
+	 * @event {Function()} error 加载失败
+	 * @event {Function()} load 加载成功	
+	 */
+	export default {
+		name: "dImage",
+		props: {
+			show: {
+				type: Boolean, //控制显示或者隐藏
+				default: true
+			},
+			isGif: {
+				type: Boolean, //因为nvue页面的image组件，渲染gif图一定会进入到@error错误事件中，所以增添判断图片是否为gif的属性来区分
+				default: false
+			},
+			bgCustom: {
+				type: String, //图片背景色，颜色值格式为"#RRGGBB"
+				default: ""
+			},
+			src: {
+				type: String, //图片地址
+				default: ""
+			},
+			width: {
+				type: [String, Number], //宽度
+				default: ""
+			},
+			height: {
+				type: [String, Number], //高度
+				default: ""
+			},
+			radius: {
+				type: Array, //圆角
+				default: function() {
+					return []
+				}
+			},
+			mode: {
+				type: String, //图片裁剪、缩放的模式
+				default: "scaleToFill"
+			},
+			errorSrc: {
+				type: String, //加载失败图片
+				default: ""
+			},
+			beforeSrc: {
+				type: String, //加载之前图片
+				default: ""
+			},
+			fadeShow: {
+				type: Boolean, //图片显示动画效果(仅App-nvue 2.3.4+ Android有效)
+				default: false
+			},
+			stop: {
+				type: Boolean, //阻止事件冒泡
+				default: false
+			},
+			lazyLoad: {
+				type: Boolean, //图片懒加载。只针对page与scroll-view下的image有效
+				default: false
+			},
+			unit: {
+				type: String, //宽高单位
+				default: "rpx"
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			}
+		},
+		data() {
+			return {
+				imageSrc: ""
+			}
+		},
+		computed: {
+			style_image() {
+				let styleList = { ...this.styleCustom
+				};
+				/* 自定义背景色 */
+				if (!!this.bgCustom) {
+					let bgCustom_temp = {
+						backgroundColor: this.bgCustom
+					};
+					styleList = Object.assign(styleList, bgCustom_temp);
+				};
+				/* 宽度 */
+				if (!!this.width) {
+					let width_temp = {
+						width: this.width + this.unit
+					};
+					styleList = Object.assign(styleList, width_temp);
+				};
+				/* 高度 */
+				if (!!this.height) {
+					let height_temp = {
+						height: this.height + this.unit
+					};
+					styleList = Object.assign(styleList, height_temp);
+				};
+				/* 圆角 */
+				switch (this.radius.length) {
+					case 1:
+						let radius_one = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[0] + 'rpx',
+							borderBottomLeftRadius: this.radius[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_one);
+						break;
+					case 2:
+						let radius_two = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[1] + 'rpx',
+							borderBottomLeftRadius: this.radius[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_two);
+						break;
+					case 4:
+						let radius_four = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[1] + 'rpx',
+							borderBottomRightRadius: this.radius[2] + 'rpx',
+							borderBottomLeftRadius: this.radius[3] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_four);
+						break;
+					default:
+						break;
+				};
+				return styleList;
+			}
+		},
+		watch: {
+			src: {
+				handler(newVal, oldVal) {
+					if (!this.src) {
+						//为空
+						this.imageSrc = this.beforeSrc;
+					} else {
+						//不为空
+						this.imageSrc = this.src;
+					}
+				},
+				immediate: true
+			}
+		},
+		methods: {
+			/* 当图片加载失败时,显示加载失败图片 */
+			error(e) {
+				//因为gif图不管怎么样都会进入错误信息里，所以显示图片时屏蔽gif图，如果gif图需要显示，则需填写is-gif属性
+				//当图片地址src不为空且不是gif图时返回错误信息
+				if (!!this.src && !this.isGif) {
+					this.imageSrc = this.errorSrc;
+					this.$emit("error", e);
+				};
+			},
+			//当图片载入完毕时，发布到 AppService 的事件名，事件对象event.detail = {height:'图片高度px', width:'图片宽度px'}
+			load(e) {
+				this.$emit("load", e);
+			},
+			//点击事件
+			click(event) {
+				this.$emit('click');
+				if (this.stop) {
+					event.stopPropagation();
+				}
+			},
+			//长按事件
+			longpress(event) {
+				this.$emit('longpress');
+				event.stopPropagation();
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

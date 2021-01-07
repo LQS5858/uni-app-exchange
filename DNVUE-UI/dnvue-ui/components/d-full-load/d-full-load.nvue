@@ -1,0 +1,129 @@
+<template>
+	<d-popup :show="isShow" :maskTransparent="true">
+		<d-column mode="center" :bg="bg" :bg-custom="bgCustom" :padding="padding" :radius="radius" :margin="[0,0,offsetBottom,0]">
+			<d-image :width="size" is-gif :height="size" :src="src"></d-image>
+			<d-text :show="text != ''" :size="textSize" :text="text" :color-custom="colorCustom" :color="color"></d-text>
+		</d-column>
+	</d-popup>
+</template>
+
+<script>
+	import imageBase64 from "../../tool/imageBase64.js"
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.0
+	 * 1.添加 bg-custom 属性，自定义背景色，示例 #000000
+	 * 2.添加 color-custom属性，自定义提示内容颜色，#000000
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * fullLoad 全屏加载
+	 * @description 全屏加载组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏
+	 * @property {String} src 图片地址
+	 * @property {String, Number} size 图片尺寸
+	 * @property {String, Number} text 提示内容
+	 * @property {String, Number} text-size 提示内容字号
+	 * @property {String} color 提示内容颜色
+	 * @property {String} color-custom 自定义提示内容颜色，示例 #000000
+	 * @property {String, Number} offsetBottom 向上偏移距离
+	 * @property {String} bg 背景色
+	 * @property {String} bg-custom 自定义背景色，示例 #000000
+	 * @property {Array} radius 圆角
+	 * @property {Array} padding 内边距 
+	 */
+	export default {
+		name: "dFullLoad",
+		props: {
+			show: {
+				type: Boolean, //控制是否显示隐藏
+				default: true
+			},
+			src: {
+				type: String,
+				default: imageBase64.loading_gif
+			},
+			size: {
+				type: [String, Number],
+				default: 180
+			},
+			text: {
+				type: [String, Number],
+				default: '加载中...'
+			},
+			textSize: {
+				type: [String, Number],
+				default: 28
+			},
+			color: {
+				type: String,
+				default: 'tips'
+			},
+			colorCustom: {
+				type: String,
+				default: ''
+			},
+			offsetBottom: {
+				type: [Number, String],
+				default: 288
+			},
+			bg: {
+				type: String,
+				default: ''
+			},
+			bgCustom: {
+				type: String,
+				default: ''
+			},
+			radius: {
+				type: Array,
+				default: [12]
+			},
+			padding: {
+				type: Array,
+				default: [24]
+			}
+		},
+		data() {
+			return {
+				isShow: false
+			};
+		},
+		watch: {
+			show: {
+				handler(newVal) {
+					if (newVal) {
+						this.open()
+					} else {
+						this.close()
+					}
+				},
+				immediate: true
+			}
+		},
+		methods: {
+			/* 打开 */
+			open() {
+				this.isShow = true;
+				this.$emit('change', {
+					detail: this.isShow
+				});
+			},
+			/* 关闭 */
+			close() {
+				this.isShow = false;
+				this.$emit('change', {
+					detail: this.isShow
+				});
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

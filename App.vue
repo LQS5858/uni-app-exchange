@@ -1,6 +1,7 @@
 <script>
 
 import { manifestUrl } from '@/config/api'
+let count = 0
 export default {
   onLaunch: function () {
     console.log('App Launch');
@@ -13,22 +14,8 @@ export default {
     console.log('App Hide');
   },
   mounted () {
-    setTimeout(() => {
-      this.getDom()
-    }, 5000);
   },
   methods: {
-    getDom () {
-      const query = uni.createSelectorQuery()
-      const dom = query.select('uni-page')
-      // dom.classList.add('test')
-      dom.fields({
-        size: true
-      },
-        data => {
-          console.log('--dom--', data);
-        }).exec()
-    },
     async initManifest () {
       uni.request({
         url: manifestUrl,
@@ -95,12 +82,12 @@ export default {
 </script>
 
 <style lang="less">
-@import "./assets/styles/global.less";
+@import './assets/styles/global.less';
 
 /* 解决头条小程序组件内引入字体不生效的问题 */ /* #ifdef MP-TOUTIAO */
 @font-face {
   font-family: uniicons;
-  src: url("/static/uni.ttf");
+  src: url('/static/uni.ttf');
 }
 /* #endif */
 

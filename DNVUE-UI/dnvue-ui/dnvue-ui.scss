@@ -1,0 +1,390 @@
+/************************************************
+  **********   dNvue-ui作者:邓琪昌    **********
+   **********    版本号:1.1.1        **********
+   *********************************************/
+
+/*****************************************************************************************************************
+******如果dnvue-ui应用到非法的程序中，比如涉及赌博，暴力等方面。因此产生纠纷等法律问题，dnvue-ui不承担任何责任********
+*****************************************************************************************************************/
+
+/* ====================
+		行向布局
+ ======================*/
+/* 如果存在direction:ltr，则从左到右排布；如果存在direction:rtl，则从右到左排布,默认direction:ltr。 */
+.row-wrap{flex-direction: row;flex-wrap: wrap;}
+/* 排布方向与flex-direction:row相反 */
+.row-reverse-wrap{flex-direction: row-reverse;flex-wrap: wrap;}
+/* //如果存在direction:ltr，则从左到右排布；如果存在direction:rtl，则从右到左排布,默认direction:ltr。 */
+.row-nowrap{flex-direction: row;flex-wrap: nowrap;}
+/* 排布方向与flex-direction:row相反 */
+.row-reverse-nowrap{flex-direction: row-reverse;flex-wrap: nowrap;}
+/* 是默认值，所有的 flex 成员项都排列在容器的前部（默认） */
+.row-start{flex-direction: row;justify-content: flex-start;}
+/* 成员项排列在容器的后部 */
+.row-end{flex-direction: row;justify-content: flex-end;}
+/* 成员项排列在容器居中 */
+.row-center{flex-direction: row;justify-content: center;}
+/* 横向两端对齐,位于各行之间留有空白的容器内 */
+.row-space-between{flex-direction: row;justify-content: space-between;}
+/* 横向两端对齐,位于各行之前、之间、之后都留有空白的容器内 */
+.row-space-around{flex-direction: row;justify-content: space-around;}
+/* 行垂直居中 */
+.row-middle-center {flex-direction: row;justify-content: center;align-items: center;}
+/* 垂直横向两端对齐,位于各行之前、之间、之后都留有空白的容器内 */
+.row-middle-around {flex-direction: row;align-items: center;justify-content: space-around;}
+/* 垂直横向两端对齐,位于各行之间留有空白的容器内 */
+.row-middle-between {flex-direction: row;align-items: center;justify-content: space-between;}
+/* 则是上对齐，所有的成员项排列在容器顶部； */
+.row-top{flex-direction: row;align-items: flex-start;}
+/* 是中间对齐，所有成员项都垂直地居中显示。 */
+.row-middle{flex-direction: row;align-items: center;}
+/* 是底部对齐，所有成员项都垂直地居底显示。 */
+.row-bottom{flex-direction: row;align-items: flex-end;}
+/* ====================
+		列向布局
+ ======================*/
+
+ /* 从上到下排布 */
+.column-column{flex-direction: column;}
+ /* 从下到上排布 */
+.column-reverse{flex-direction: column-reverse}
+/* 是默认值，所有的 flex 成员项都排列在容器的前部（默认） */
+.column-top{justify-content: flex-start;}
+/* 成员项排列在容器的后部 */
+.column-bottom{justify-content: flex-end;}
+/* 成员项排列在容器垂直中间 */
+.column-middle{justify-content: center;}
+/* 则是上对齐，所有的成员项排列在容器顶部； */
+.column-start{align-items: flex-start;}
+/* 是中间对齐，所有成员项都垂直地居中显示。 */
+.column-center{align-items: center;}
+/* 是底部对齐，所有成员项都垂直地居底显示。 */
+.column-end{align-items: flex-end;}
+/* 列垂直居中 */
+.column-middle-center {justify-content: center;align-items: center;}
+/* ====================
+		字体图标
+ ======================*/
+.dIcon {font-family: dIcon;}
+/* ====================
+		边框颜色
+=======================*/
+.border{border-width: 2rpx;border-style: solid;border-color: $dnvue-border-color;}
+.border-left{border-left-width: 2rpx;border-style: solid;border-color: $dnvue-border-color;}
+.border-right{border-right-width: 2rpx;border-style: solid;border-color: $dnvue-border-color;}
+.border-top{border-top-width: 2rpx;border-style: solid;border-color: $dnvue-border-color;}
+.border-bottom{border-bottom-width: 2rpx;border-style: solid;border-color: $dnvue-border-color;}
+
+.border-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-deep;}
+.border-deep-left{border-left-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-deep;}
+.border-deep-right{border-right-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-deep;}
+.border-deep-top{border-top-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-deep;}
+.border-deep-bottom{border-bottom-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-deep;}
+
+.border-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-shallow;}
+.border-shallow-left{border-left-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-shallow;}
+.border-shallow-right{border-right-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-shallow;}
+.border-shallow-top{border-top-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-shallow;}
+.border-shallow-bottom{border-bottom-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-shallow;}
+
+.border-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-light;}
+.border-light-left{border-left-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-light;}
+.border-light-right{border-right-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-light;}
+.border-light-top{border-top-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-light;}
+.border-light-bottom{border-bottom-width: 2rpx;border-style: solid;border-color: $dnvue-border-color-light;}
+
+/* 主题色 */
+.border-theme{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-theme;}
+.border-theme-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-theme-deep;}
+.border-theme-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-theme-shallow;}
+.border-theme-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-theme-light;}
+/* 黑 */
+.border-black{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-black;}
+.border-black-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-black-deep;}
+.border-black-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-black-shallow;}
+.border-black-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-black-light;}
+/* 白 */
+.border-white{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-white;}
+.border-white-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-white-deep;}
+.border-white-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-white-shallow;}
+.border-white-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-white-light;}
+/* 灰 */
+.border-gray{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-gray;}
+.border-gray-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-gray-deep;}
+.border-gray-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-gray-shallow;}
+.border-gray-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-gray-light;}
+/* 红 */
+.border-red{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-red;}
+.border-red-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-red-deep;}
+.border-red-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-red-shallow;}
+.border-red-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-red-light;}
+/* 橙 */
+.border-orange{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-orange;}
+.border-orange-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-orange-deep;}
+.border-orange-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-orange-shallow;}
+.border-orange-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-orange-light;}
+/* 黄 */
+.border-yellow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-yellow;}
+.border-yellow-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-yellow-deep;}
+.border-yellow-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-yellow-shallow;}
+.border-yellow-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-yellow-light;}
+/* 绿 */
+.border-green{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-green;}
+.border-green-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-green-deep;}
+.border-green-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-green-shallow;}
+.border-green-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-green-light;}
+/* 青 */
+.border-cyan{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-cyan;}
+.border-cyan-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-cyan-deep;}
+.border-cyan-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-cyan-shallow;}
+.border-cyan-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-cyan-light;}
+/* 蓝 */
+.border-blue{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-blue;}
+.border-blue-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-blue-deep;}
+.border-blue-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-blue-shallow;}
+.border-blue-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-blue-light;}
+/* 紫 */
+.border-purple{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-purple;}
+.border-purple-deep{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-purple-deep;}
+.border-purple-shallow{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-purple-shallow;}
+.border-purple-light{border-width: 2rpx;border-style: solid;border-color: $dnvue-bg-color-purple-light;}
+/* ====================
+		背景色
+=======================*/
+/* 主题色 */
+.bg-theme{background-color: $dnvue-bg-color-theme;}
+.bg-theme-deep{background-color: $dnvue-bg-color-theme-deep;}
+.bg-theme-shallow{background-color: $dnvue-bg-color-theme-shallow;}
+.bg-theme-light{background-color: $dnvue-bg-color-theme-light;}
+/* 黑 */
+.bg-black{background-color: $dnvue-bg-color-black;}
+.bg-black-deep{background-color: $dnvue-bg-color-black-deep;}
+.bg-black-shallow{background-color: $dnvue-bg-color-black-shallow;}
+.bg-black-light{background-color: $dnvue-bg-color-black-light;}
+/* 白 */
+.bg-white{background-color: $dnvue-bg-color-white;}
+.bg-white-deep{background-color: $dnvue-bg-color-white-deep;}
+.bg-white-shallow{background-color: $dnvue-bg-color-white-shallow;}
+.bg-white-light{background-color: $dnvue-bg-color-white-light;}
+/* 灰 */
+.bg-gray{background-color: $dnvue-bg-color-gray;}
+.bg-gray-deep{background-color: $dnvue-bg-color-gray-deep;}
+.bg-gray-shallow{background-color: $dnvue-bg-color-gray-shallow;}
+.bg-gray-light{background-color: $dnvue-bg-color-gray-light;}
+/* 红 */
+.bg-red{background-color: $dnvue-bg-color-red;}
+.bg-red-deep{background-color: $dnvue-bg-color-red-deep;}
+.bg-red-shallow{background-color: $dnvue-bg-color-red-shallow;}
+.bg-red-light{background-color: $dnvue-bg-color-red-light;}
+/* 橙 */
+.bg-orange{background-color: $dnvue-bg-color-orange;}
+.bg-orange-deep{background-color: $dnvue-bg-color-orange-deep;}
+.bg-orange-shallow{background-color: $dnvue-bg-color-orange-shallow;}
+.bg-orange-light{background-color: $dnvue-bg-color-orange-light;}
+/* 黄 */
+.bg-yellow{background-color: $dnvue-bg-color-yellow;}
+.bg-yellow-deep{background-color: $dnvue-bg-color-yellow-deep;}
+.bg-yellow-shallow{background-color: $dnvue-bg-color-yellow-shallow;}
+.bg-yellow-light{background-color: $dnvue-bg-color-yellow-light;}
+/* 绿 */
+.bg-green{background-color: $dnvue-bg-color-green;}
+.bg-green-deep{background-color: $dnvue-bg-color-green-deep;}
+.bg-green-shallow{background-color: $dnvue-bg-color-green-shallow;}
+.bg-green-light{background-color: $dnvue-bg-color-green-light;}
+/* 青 */
+.bg-cyan{background-color: $dnvue-bg-color-cyan;}
+.bg-cyan-deep{background-color: $dnvue-bg-color-cyan-deep;}
+.bg-cyan-shallow{background-color: $dnvue-bg-color-cyan-shallow;}
+.bg-cyan-light{background-color: $dnvue-bg-color-cyan-light;}
+/* 蓝 */
+.bg-blue{background-color: $dnvue-bg-color-blue;}
+.bg-blue-deep{background-color: $dnvue-bg-color-blue-deep;}
+.bg-blue-shallow{background-color: $dnvue-bg-color-blue-shallow;}
+.bg-blue-light{background-color: $dnvue-bg-color-blue-light;}
+/* 紫 */
+.bg-purple{background-color: $dnvue-bg-color-purple;}
+.bg-purple-deep{background-color: $dnvue-bg-color-purple-deep;}
+.bg-purple-shallow{background-color: $dnvue-bg-color-purple-shallow;}
+.bg-purple-light{background-color: $dnvue-bg-color-purple-light;}
+/* ====================
+		文本色
+=======================*/
+.color-main{color: $dnvue-text-color-main;}
+.color-content{color: $dnvue-text-color-content;}
+.color-tips{color: $dnvue-text-color-tips;}
+.color-light{color: $dnvue-text-color-light;}
+/* 主题色 */
+.color-theme{color: $dnvue-bg-color-theme;}
+.color-theme-deep{color: $dnvue-bg-color-theme-deep;}
+.color-theme-shallow{color: $dnvue-bg-color-theme-shallow;}
+.color-theme-light{color: $dnvue-bg-color-theme-light;}
+/* 黑 */
+.color-black{color: $dnvue-bg-color-black;}
+.color-black-deep{color: $dnvue-bg-color-black-deep;}
+.color-black-shallow{color: $dnvue-bg-color-black-shallow;}
+.color-black-light{color: $dnvue-bg-color-black-light;}
+/* 白 */
+.color-white{color: $dnvue-bg-color-white;}
+.color-white-deep{color: $dnvue-bg-color-white-deep;}
+.color-white-shallow{color: $dnvue-bg-color-white-shallow;}
+.color-white-light{color: $dnvue-bg-color-white-light;}
+/* 灰 */
+.color-gray{color: $dnvue-bg-color-gray;}
+.color-gray-deep{color: $dnvue-bg-color-gray-deep;}
+.color-gray-shallow{color: $dnvue-bg-color-gray-shallow;}
+.color-gray-light{color: $dnvue-bg-color-gray-light;}
+/* 红 */
+.color-red{color: $dnvue-bg-color-red;}
+.color-red-deep{color: $dnvue-bg-color-red-deep;}
+.color-red-shallow{color: $dnvue-bg-color-red-shallow;}
+.color-red-light{color: $dnvue-bg-color-red-light;}
+/* 橙 */
+.color-orange{color: $dnvue-bg-color-orange;}
+.color-orange-deep{color: $dnvue-bg-color-orange-deep;}
+.color-orange-shallow{color: $dnvue-bg-color-orange-shallow;}
+.color-orange-light{color: $dnvue-bg-color-orange-light;}
+/* 黄 */
+.color-yellow{color: $dnvue-bg-color-yellow;}
+.color-yellow-deep{color: $dnvue-bg-color-yellow-deep;}
+.color-yellow-shallow{color: $dnvue-bg-color-yellow-shallow;}
+.color-yellow-light{color: $dnvue-bg-color-yellow-light;}
+/* 绿 */
+.color-green{color: $dnvue-bg-color-green;}
+.color-green-deep{color: $dnvue-bg-color-green-deep;}
+.color-green-shallow{color: $dnvue-bg-color-green-shallow;}
+.color-green-light{color: $dnvue-bg-color-green-light;}
+/* 青 */
+.color-cyan{color: $dnvue-bg-color-cyan;}
+.color-cyan-deep{color: $dnvue-bg-color-cyan-deep;}
+.color-cyan-shallow{color: $dnvue-bg-color-cyan-shallow;}
+.color-cyan-light{color: $dnvue-bg-color-cyan-light;}
+/* 蓝 */
+.color-blue{color: $dnvue-bg-color-blue;}
+.color-blue-deep{color: $dnvue-bg-color-blue-deep;}
+.color-blue-shallow{color: $dnvue-bg-color-blue-shallow;}
+.color-blue-light{color: $dnvue-bg-color-blue-light;}
+/* 紫 */
+.color-purple{color: $dnvue-bg-color-purple;}
+.color-purple-deep{color: $dnvue-bg-color-purple-deep;}
+.color-purple-shallow{color: $dnvue-bg-color-purple-shallow;}
+.color-purple-light{color: $dnvue-bg-color-purple-light;}
+/* ====================
+		内、外边距
+ ======================*/
+$distance-map:(
+	xs:$unify-distance-xs,
+	sm:$unify-distance-sm,
+	md:$unify-distance-md,
+	lg:$unify-distance-lg,
+	xl:$unify-distance-xl,
+	xxl:$unify-distance-xxl,
+);
+@each $size in xs,sm,md,lg,xl,xxl {
+	/* 外边距 */
+	.margin-#{$size} {margin: map-get($map: $distance-map, $key: $size);}
+	/* 外边距顶部距离 */
+	.margin-top-#{$size} {margin-top: map-get($map: $distance-map, $key: $size);}
+	/* 外边距底部距离 */
+	.margin-bottom-#{$size} { margin-bottom: map-get($map: $distance-map, $key: $size);}
+	/* 外边距左边距离 */
+	.margin-left-#{$size} {margin-left: map-get($map: $distance-map, $key: $size);}
+	/* 外边距右边距离 */
+	.margin-right-#{$size} {margin-right: map-get($map: $distance-map, $key: $size);}
+	/* 水平方向外边距 */
+	.margin-lr-#{$size} {margin-left: map-get($map: $distance-map, $key: $size);margin-right: map-get($map: $distance-map, $key: $size);}
+	/* 左右上方向外边距 */
+	.margin-lrt-#{$size} {margin-left: map-get($map: $distance-map, $key: $size);margin-right: map-get($map: $distance-map, $key: $size);margin-top: map-get($map: $distance-map, $key: $size);}
+	/* 左右下方向外边距 */
+	.margin-lrb-#{$size} {margin-left: map-get($map: $distance-map, $key: $size);margin-right: map-get($map: $distance-map, $key: $size);margin-bottom: map-get($map: $distance-map, $key: $size);}
+	/* 垂直方向外边距 */
+	.margin-tb-#{$size} {margin-top: map-get($map: $distance-map, $key: $size);margin-bottom: map-get($map: $distance-map, $key: $size);}
+	/* 内边距*/
+	.padding-#{$size} {padding: map-get($map: $distance-map, $key: $size);}
+	/* 内边距顶部距离 */
+	.padding-top-#{$size} {padding-top: map-get($map: $distance-map, $key: $size);}
+	/* 内边距底部距离 */
+	.padding-bottom-#{$size} { padding-bottom: map-get($map: $distance-map, $key: $size);}
+	/* 内边距左边距离 */
+	.padding-left-#{$size} {padding-left: map-get($map: $distance-map, $key: $size);}
+	/* 内边距右边距离 */
+	.padding-right-#{$size} {padding-right: map-get($map: $distance-map, $key: $size);}
+	/* 水平方向内边距 */
+	.padding-lr-#{$size} {padding-left: map-get($map: $distance-map, $key: $size);padding-right: map-get($map: $distance-map, $key: $size);}
+	/* 左右上方向内边距 */
+	.padding-lrt-#{$size} {padding-left: map-get($map: $distance-map, $key: $size);padding-right: map-get($map: $distance-map, $key: $size);padding-top: map-get($map: $distance-map, $key: $size);}
+	/* 左右下方向内边距 */
+	.padding-lrb-#{$size} {padding-left: map-get($map: $distance-map, $key: $size);padding-right: map-get($map: $distance-map, $key: $size);padding-bottom: map-get($map: $distance-map, $key: $size);}
+	/* 垂直方向内边距 */
+	.padding-tb-#{$size} {padding-top: map-get($map: $distance-map, $key: $size);padding-bottom: map-get($map: $distance-map, $key: $size);}
+}
+/* ====================
+		文字尺寸
+ ======================*/
+$text-map:(
+	xs:$unify-text-xs,
+	sm:$unify-text-sm,
+	md:$unify-text-md,
+	lg:$unify-text-lg,
+	xl:$unify-text-xl,
+	xxl:$unify-text-xxl,
+);
+@each $size in xs,sm,md,lg,xl,xxl {
+	.text-#{$size} {font-size: map-get($map: $text-map, $key: $size) !important;}
+}
+/* ====================
+		圆角尺寸
+ ======================*/
+$radiusSize-map:(
+	xs:$unify-radius-xs,
+	sm:$unify-radius-sm,
+	md:$unify-radius-md,
+	lg:$unify-radius-lg,
+	xl:$unify-radius-xl,
+	xxl:$unify-radius-xxl,
+);
+@each $size in xs,sm,md,lg,xl,xxl {
+	/* 全角 */
+	.radius-#{$size} {border-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 左上角 */
+	.radius-lt-#{$size} {border-top-left-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 上左右角 */
+	.radius-lrt-#{$size} {border-top-left-radius: map-get($map: $radiusSize-map, $key: $size);border-top-right-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 右上角 */
+	.radius-rt-#{$size} {border-top-right-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 左下角 */
+	.radius-rb-#{$size} {border-bottom-right-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 下左右角 */
+	.radius-lrb-#{$size} {border-bottom-right-radius: map-get($map: $radiusSize-map, $key: $size);border-bottom-left-radius: map-get($map: $radiusSize-map, $key: $size);}
+	/* 右下角 */
+	.radius-lb-#{$size} {border-bottom-left-radius: map-get($map: $radiusSize-map, $key: $size);}
+}
+/* ====================
+		定位
+ ======================*/
+.position-relative{position: relative;}/* 相对定位 */
+.position-absolute{position: absolute;}/* 绝对定位 */
+.position-absolute-lt{position: absolute;left: 0;top: 0;}/* 左上角 */
+.position-absolute-rt{position: absolute;right: 0;top: 0;}/* 右上角 */
+.position-absolute-lb{position: absolute;left: 0;bottom: 0;}/* 左下角 */
+.position-absolute-rb{position: absolute;right: 0;bottom: 0;}/* 右下角 */
+/* 保证元素在页面窗口中的对应位置显示 */
+.position-fixed{position: fixed;}
+/* 指的是仅当元素滚动到页面之外时，元素会固定在页面窗口的顶部 */
+.position-sticky{position: sticky;top: 0;}
+/* =====================
+		基础CLASS
+ =======================*/
+ /* 超出行数隐藏（ellipsis-{1-12}）*/
+ @for $i from 1 through 13 {
+   .ellipsis-#{$i} {text-overflow: ellipsis;lines: $i;}
+ }
+ /* flex-{1~12} */
+ @for $i from 1 through 13 {
+	.flex-#{$i}{flex: $i;}
+}
+ /* 文字位置*/
+ .text-center{text-align: center;}
+ .text-left{text-align: left;}
+ .text-right{text-align: right;}
+ .text-bold{font-weight: bold;}
+ .text-decoration{text-decoration:line-through}

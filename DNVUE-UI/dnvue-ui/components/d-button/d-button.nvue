@@ -1,0 +1,268 @@
+<template>
+	<d-row mode="center" v-if="show" hover :width="width" :hover-rgba="hoverRgba" :disabled="disabled" :radius="[radius]">
+		<button @click="click" :disabled="disabled" :class="['row-middle-center','bg-'+bg]" class="d-button" type="" :style="style_button">
+			<d-image is-gif :show="loading" :src="loadingSrc" :width="loadingSize" :height="loadingSize"></d-image>
+			<d-text :color="color" :color-custom="colorCustom" :size="size" :text="text"></d-text>
+		</button>
+	</d-row>
+</template>
+
+<script>
+	import imageBase64 from "../../tool/imageBase64.js"
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.添加style-custom 属性，自定义样式
+	 * 2.移除form-type属性
+	 * 3.添加 hover-rgba 属性，点击状态颜色，默认 rgba(0, 0, 0, 0.2)
+	 * 4.添加bg-gradient 自定义渐变颜色，示例 ['left','#000000','#FFFFFF']
+	 * 
+	 * 版本1.1.0
+	 * 1.type变更为bg，可使用 DNVUE UI 内置的所有颜色(class)
+	 * 2.新增 bg-custom 属性，自定义背景颜色，示例 #000000
+	 * 3.新增 color-custom 属性，自定义文本颜色，示例 #000000
+	 * 4.新增 loading-size 属性，loading图标大小，默认值 42
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * button 按钮
+	 * @description 按钮组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示或者隐藏
+	 * @property {String} bg = [theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 背景颜色(class)
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} bg-custom 自定义背景色，格式示例 #000000
+	 *  @value submit 提交表单
+	 *  @value reset 重置表单
+	 * @property {String, Number} text 文本内容
+	 * @property {String} color = [main|content|tips|light|theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 文本颜色
+	 *  @value main 一级文字/正文/主标题
+	 *  @value content 二级文字/副标/常规内容
+	 *  @value tips 三级文字/补充描述/辅助内容
+	 *  @value light 四级文字/占位内容
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} color-custom 自定义文本颜色，格式示例 #000000
+	 * @property {String, Number}  size 文本字号
+	 * @property {String, Number} width 按钮宽度
+	 * @property {String, Number} height 按钮高度
+	 * @property {String, Number} radius 按钮圆角尺寸
+	 * @property {Boolean} disabled 是否禁用
+	 * @property {Boolean} loading 名称前是否带 loading 图标
+	 * @property {String, Number} loading-size loading图标大小 
+	 * @property {String} loading-src loading的 GIF 图片地址
+	 * @property {String} hover-rgba 点击效果颜色，默认rgba(0, 0, 0, 0.2)
+	 * @property {Array} bg-gradient 自定义渐变颜色，示例 ['left','#000000','#FFFFFF']
+	 * @event {Function()} click 点击事件 
+	 */
+	export default {
+		name: "dButton",
+		props: {
+			show: {
+				type: Boolean,
+				default: true
+			},
+			bg: {
+				type: String,
+				default: 'theme'
+			},
+			bgCustom: {
+				type: String, //自定义背景色
+				default: ''
+			},
+			text: {
+				type: [String, Number],
+				default: ''
+			},
+			color: {
+				type: String,
+				default: 'white'
+			},
+			colorCustom: {
+				type: String, //自定义文本颜色
+				default: ''
+			},
+			size: {
+				type: [String, Number],
+				default: 30
+			},
+			width: {
+				type: [String, Number],
+				default: 500
+			},
+			height: {
+				type: [String, Number],
+				default: 80
+			},
+			radius: {
+				type: [String, Number],
+				default: 6
+			},
+			disabled: {
+				type: Boolean,
+				default: false
+			},
+			loading: {
+				type: Boolean,
+				default: false
+			},
+			loadingSize: {
+				type: [String, Number],
+				default: 42
+			},
+			loadingSrc: {
+				type: String,
+				default: imageBase64.button_gif
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			},
+			hoverRgba: {
+				type: String, //点击效果演示
+				default: 'rgba(0, 0, 0, 0.2)'
+			},
+			bgGradient: {
+				type: Array, //渐变颜色
+				default: function() {
+					return []
+				}
+			}
+		},
+		data() {
+			return {
+				state: false
+			};
+		},
+		computed: {
+			style_button() {
+				let styleList = {
+					...this.styleCustom,
+					width: this.width + 'rpx',
+					height: this.height + 'rpx',
+					borderRadius: this.radius + 'rpx'
+				};
+				/* 自定义渐变背景色 */
+				switch (this.bgGradient.length) {
+					case 3:
+						let bgGradient_three = {
+							backgroundImage: `linear-gradient(to ${this.bgGradient[0]}, ${this.bgGradient[1]}, ${this.bgGradient[2]})`
+						};
+						styleList = Object.assign(styleList, bgGradient_three);
+						break;
+					default:
+						break;
+				};
+				/* 自定义背景色 */
+				if (this.bgCustom != "") {
+					let bgCustom_temp = {
+						'backgroundColor': this.bgCustom
+					};
+					styleList = Object.assign(styleList, bgCustom_temp);
+				};
+				return styleList;
+			}
+		},
+		methods: {
+			click() {
+				this.$emit("click");
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.d-button {
+		border-width: 0;
+	}
+</style>

@@ -1,0 +1,268 @@
+<template>
+	<d-column mode="center" :padding="[66,0]" :show="show">
+		<d-icon :size="size" :color="color" :color-custom="colorCustom" :icon="emptyType[mode].icon" />
+		<d-row :margin="[32,0,0,0]">
+			<d-text :size="fontSize" :text="emptyType[mode].text" :color-custom="fontColorCustom" :color="fontColor" />
+		</d-row>
+		<slot></slot>
+	</d-column>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.0
+	 * 1.添加 color-custom 属性，自定义图标颜色，#000000
+	 * 2.添加 font-color-custom 属性， 自定义提示内容颜色，示例 #000000
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * empty 为空
+	 * @description 为空组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示或者隐藏
+	 * @property {String} mode = [wifi|signal|coupon|permission|address|car|history|info|data|message|collection|comments] 类型
+	 *  @value wifi 信号
+	 *  @value signal 网络
+	 *  @value coupon 优惠券
+	 *  @value permission 权限
+	 *  @value address 地址
+	 *  @value car 购物车
+	 *  @value history 记录
+	 *  @value info 信息
+	 *  @value data 数据
+	 *  @value message 消息
+	 *  @value collection 收藏
+	 *  @value comments 评论
+	 * @property {String} color = [main|content|tips|light|theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 图标颜色
+	 *  @value main 一级文字/正文/主标题
+	 *  @value content 二级文字/副标/常规内容
+	 *  @value tips 三级文字/补充描述/辅助内容
+	 *  @value light 四级文字/占位内容
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} color-custom 自定义图标颜色，示例 #000000
+	 * @property {Number, String} size 图标尺寸
+	 * @property {String} icon 图标名称
+	 * @property {String, Number} text 提示内容
+	 * @property {String, Number} font-size 文本字号
+	 * @property {String} font-color = [main|content|tips|light|theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 文本颜色
+	 *  @value main 一级文字/正文/主标题
+	 *  @value content 二级文字/副标/常规内容
+	 *  @value tips 三级文字/补充描述/辅助内容
+	 *  @value light 四级文字/占位内容
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} font-color-custom 自定义提示内容颜色，示例 #000000
+	 */
+	export default {
+		name: "dEmpty",
+		props: {
+			show: {
+				type: Boolean, //控制显示或隐藏
+				default: true
+			},
+			mode: {
+				type: String, //wifi（信号）、signal（网络）、coupon（优惠券）、permission（权限）、address（地址）、car（购物车）、history（记录）、info（信息）、data（数据）、message（消息）、collection（收藏）、comments（评论）
+				default: 'data'
+			},
+			color: {
+				type: String, //图标颜色(class)
+				default: 'gray'
+			},
+			colorCustom:{
+				type: String, //自定义图标颜色
+				default: ''
+			},
+			size: {
+				type: [Number, String], //图标尺寸
+				default: 234
+			},
+			icon: {
+				type: String, //图标名称
+				default: ''
+			},
+			text: {
+				type: [String, Number], //提示内容
+				default: ''
+			},
+			fontSize: {
+				type: [String, Number], //文本字号
+				default: 30
+			},
+			fontColor: {
+				type: String, //文本颜色(class)
+				default: 'gray'
+			},
+			fontColorCustom:{
+				type: String, //自定义文本颜色
+				default: ''
+			},
+		},
+		data() {
+			return {
+				emptyType: {
+					wifi: {
+						icon: 'iconnosignal',
+						text: '没有WIFI'
+					},
+					signal: {
+						icon: 'iconz',
+						text: '网络状态不佳'
+					},
+					coupon: {
+						icon: 'iconyouhuiquan',
+						text: '没有优惠券'
+					},
+					permission: {
+						icon: 'iconquanxianguanli',
+						text: '没有访问权限'
+					},
+					address: {
+						icon: 'iconwodedizhi',
+						text: '没有地址'
+					},
+					car: {
+						icon: 'iconjiarugouwucheicon',
+						text: '空购物车'
+					},
+					history: {
+						icon: 'iconwebzanwujilu',
+						text: '没有记录'
+					},
+					info: {
+						icon: 'iconzanwuxinxi',
+						text: '没有信息'
+					},
+					data: {
+						icon: 'iconzanwushuju',
+						text: '没有数据'
+					},
+					message: {
+						icon: 'iconzanwuxiaoxi',
+						text: '没有消息'
+					},
+					collection: {
+						icon: 'iconmeiyoushoucang',
+						text: '没有收藏'
+					},
+					comments: {
+						icon: 'iconmeiyoupinglun',
+						text: '没有评论'
+					}
+				}
+			};
+		},
+		watch: {
+			text: {
+				handler(newVal) {
+					if (this.text != '') {
+						this.emptyType[this.mode].text = this.text;
+					}
+				},
+				immediate: true
+			}
+		},
+		created() {
+			//当文字属性不为空，则替换提示内容
+			if (this.text != '') {
+				this.emptyType[this.mode].text = this.text;
+			};
+			//当字体图标属性不为空，则替换显示图标
+			if (this.icon != '') {
+				this.emptyType[this.mode].icon = this.icon;
+			};
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

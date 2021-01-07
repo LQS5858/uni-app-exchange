@@ -12,7 +12,7 @@
 		{
 			"path": "pages/login/index",
 			"style": {
-				"navigationBarTitleText": "登录也"
+				"navigationBarTitleText": "登录页"
 			}
 		}
 	],

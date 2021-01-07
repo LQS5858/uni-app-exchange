@@ -1,0 +1,201 @@
+<template>
+	<d-row mode="wrap">
+		<d-row @click="select(index)" :borderCustom="borderCustom" :width="width" :height="height" mode="middle-center"
+		 :padding="padding" :margin="margin" :bg="item.checked?bg[1]:bg[0]" :bg-custom="item.checked?bgCustom[1]:bgCustom[0]" :radius="radius" v-for="(item,index) in list"
+		 :key="index">
+			<d-text :text="item.name" :color-custom="item.checked?colorCustom[1]:colorCustom[0]" :color="item.checked?color[1]:color[0]" :size="size" ellipsis="1"></d-text>
+		</d-row>
+	</d-row>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * select-tags 可选标签
+	 * @description 可选标签组件
+	 * @tutorial 
+	 * @property {Array} list 数据源，格式:[{name:'电影',value:'0',checked:false},{name:'动漫',value:'2',checked:false}]
+	 * @property {Array} padding 内边距
+	 * @property {Array} margin 外边距
+	 * @property {Array} radius 圆角
+	 * @property {Boolean} is-more 是否多选
+	 * @property {Number, String} width 宽度，不填默认自适应
+	 * @property {Number, String} height 高度，不填默认自适应
+	 * @property {Number, String} size 文本大小
+	 * @property {Array} color 文本颜色(class)
+	 * @property {Array} color-custom 自定义文本颜色
+	 * @property {Array} bg 背景颜色(class) 
+	 * @property {Array} bg-custom 自定义背景色
+	 * @property {Array} border-custom 自定标边框颜色
+	 * @property {Boolean} radio-cancel 单选可取消 
+	 */
+	export default {
+		name: "dSelectTags",
+		props: {
+			list: {
+				type: Array,
+				default: function() {
+					return []
+				}
+			},
+			padding: {
+				type: Array,
+				default: function() {
+					return [16, 24]
+				}
+			},
+			margin: {
+				type: Array,
+				default: function() {
+					return [8]
+				}
+			},
+			radius: {
+				type: Array,
+				default: function() {
+					return [8]
+				}
+			},
+			isMore: {
+				type: Boolean, //是否多选
+				default: false
+			},
+			width: {
+				type: [Number, String], //宽度，不填默认自适应
+				default: ''
+			},
+			height: {
+				type: [Number, String], //高度，不填默认自适应
+				default: ''
+			},
+			size: {
+				type: [Number, String], //文本大小
+				default: 30
+			},
+			color: {
+				type: Array, //文本颜色(class)
+				default: function() {
+					return ['black', 'white']
+				}
+			},
+			colorCustom: {
+				type: Array, //自定义文本颜色，示例 ['#000000','#FFFFFF']
+				default: function() {
+					return []
+				}
+			},
+			bg: {
+				type: Array, //背景颜色(class)
+				default: function() {
+					return ['white', 'theme']
+				}
+			},
+			bgCustom: {
+				type: Array, //自定义背景颜色，示例 ['#FFFFFF','#409EFF']
+				default: function() {
+					return []
+				}
+			},
+			borderCustom: {
+				type: Array, //自定义边框颜色
+				default: function() {
+					return []
+				}
+			},
+			radioCancel: {
+				type: Boolean, //单选可取消
+				default: false
+			}
+		},
+		data() {
+			return {
+
+			};
+		},
+		watch: {
+			list: {
+				handler(newVal, oldVal) {
+					this.getValue();
+				},
+				immediate: true,
+			}
+		},
+		methods: {
+			//点击选中返回值
+			select(index) {
+				if (!this.isMore) {
+					for (let i in this.list) {
+						if (i == index) {
+							if (this.radioCancel) {
+								if (this.list[i].checked) {
+									this.list[i].checked = false;
+									this.$emit("change", ''); //单选返回值
+								} else {
+									this.list[i].checked = true;
+									this.$emit("change", this.list[i]); //单选返回值
+								}
+							} else {
+								this.list[i].checked = true;
+								this.$emit("change", this.list[i]); //单选返回值
+							}
+						} else {
+							this.list[i].checked = false;
+						}
+					}
+				} else {
+					this.list[index].checked = !this.list[index].checked;
+					let selectList = [];
+					for (let i in this.list) {
+						if (this.list[i].checked) {
+							selectList.push(this.list[i])
+						}
+					};
+					this.$emit("change", selectList); //多选返回值数组
+				}
+			},
+			//获取返回默认值
+			getValue() {
+				let selectList = [];
+				for (let i in this.list) {
+					if (this.list[i].checked) {
+						if (!this.isMore) {
+							this.$emit("change", this.list[i]); //单选返回值
+						} else {
+							selectList.push(this.list[i])
+						}
+					}
+				};
+				if (this.isMore) {
+					this.$emit("change", selectList); //多选返回值数组
+				}
+			},
+			//全选
+			all() {
+				if (this.isMore) {
+					for (let i in this.list) {
+						this.list[i].checked = true;
+					};
+					this.$emit("change", this.list)
+				} else {
+					console.error('全选事件仅在属性:is-more="true"时生效');
+				}
+			},
+			//清除
+			clear() {
+				for (let i in this.list) {
+					this.list[i].checked = false;
+				};
+				this.$emit("change", this.list)
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

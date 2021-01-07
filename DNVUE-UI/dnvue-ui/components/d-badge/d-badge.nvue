@@ -1,0 +1,93 @@
+<template>
+	<d-row :show="show">
+		<d-row :show="!isDot" mode="middle-center" :padding="text.length>=2?[12]:[0]" :bg-custom="bgCustom" :bg="bg" :height="size"
+		 :radius="[size]" :minWidth="size">
+			<d-text :size="fontSize" :color="color" :color-custom="colorCustom" :text="text"></d-text>
+		</d-row>
+		<d-row :show="isDot">
+			<d-row :width="dotSize" :height="dotSize" :bg="bg" :bg-custom="bgCustom" :radius="[dotSize]"></d-row>
+		</d-row>
+	</d-row>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.0
+	 * 1.number属性变更为text
+	 * 2.添加size（角标大小）、font-size（内容文本大小）、is-dot（是否红点）、bg-custom（自定义角标背景色）、color-custom（自定义角标内容颜色）、dot-size（红点大小）属性
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * badge 角标
+	 * @description 角标组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏
+	 * @property {String, Number} text 角标内容
+	 * @property {String, Number} font-size 内容文本大小
+	 * @property {String, Number} size 角标大小
+	 * @property {Boolean} is-dot 是否为红点
+	 * @property {String, Number} dot-size 红点大小
+	 * @property {String} bg 角标背景颜色
+	 * @property {String} bg-custom 自定义角标背景颜色
+	 * @property {String} color 角标文本颜色
+	 * @property {String} color-custom 自定义角标文本颜色
+	 */
+	export default {
+		name: "dBadge",
+		props: {
+			show: {
+				type: Boolean,
+				default: true //控制显示或隐藏
+			},
+			text: {
+				type: [String, Number],
+				default: '0' //角标内容
+			},
+			fontSize: {
+				type: [String, Number],
+				default: '22' //内容文本大小
+			},
+			size: {
+				type: [String, Number],
+				default: '32' //角标大小
+			},
+			isDot: {
+				type: Boolean,
+				default: false //是否为红点
+			},
+			dotSize: {
+				type: [String, Number],
+				default: '15' //红点大小
+			},
+			bg: {
+				type: String,
+				default: 'red' //角标背景色
+			},
+			bgCustom: {
+				type: String,
+				default: '' //自定义背景色
+			},
+			color: {
+				type: String,
+				default: 'white' //角标文本颜色
+			},
+			colorCustom: {
+				type: String,
+				default: '' //自定义文本颜色
+			}
+		},
+		data() {
+			return {
+
+			};
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

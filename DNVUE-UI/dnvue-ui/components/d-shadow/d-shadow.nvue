@@ -1,0 +1,93 @@
+<template>
+	<d-column :show="show" :min-height="height" :padding="padding" :margin="margin" :width="width">
+		<image :src="list[listIndex].params" class="shadow-image" mode="scaleToFill"></image>
+		<slot></slot>
+	</d-column>
+</template>
+
+<script>
+	import shadowBase64 from "./shadowBase64.js"
+	/****************** 组件更新日志 ******************/
+	/** 
+	 *版本1.1.1
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * shadow 阴影
+	 * @description 阴影组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏
+	 * @property {String} mode 阴影类型
+	 *  @value straight 直角
+	 *  @value micro 微圆
+	 * @param {Array} padding 内边距
+	 * @param {Array} margin 外边距
+	 * @property {Number, String} width 宽度
+	 * @property {Number, String} height 高度
+	 */
+	export default {
+		name: "dShadow",
+		props: {
+			show: {
+				type: Boolean,
+				default: true
+			},
+			mode: {
+				type: String,
+				default: 'straight'
+			},
+			padding: {
+				type: Array,
+				default: function() {
+					return [24]
+				}
+			},
+			margin: {
+				type: Array,
+				default: function() {
+					return []
+				}
+			},
+			width: {
+				type: [Number, String],
+				default: ''
+			},
+			height: {
+				type: [Number, String],
+				default: 0
+			}
+		},
+		data() {
+			return {
+				list: [{
+						name: 'straight', //直角
+						params: shadowBase64.straight
+					},
+					{
+						name: 'micro', //微圆
+						params: shadowBase64.micro
+					}
+				],
+				listIndex: 0
+			};
+		},
+		created() {
+			for (let i in this.list) {
+				if (this.list[i].name == this.mode) {
+					this.listIndex = i
+				}
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.shadow-image {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+</style>

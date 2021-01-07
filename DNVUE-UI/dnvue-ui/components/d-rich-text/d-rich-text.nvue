@@ -1,0 +1,314 @@
+<template>
+	<d-column :width="width" :max-width="maxWidth" :min-width="minWidth" :style-custom="styleCustom">
+		<slot v-if="!nodes.length" />
+		<web-view id="_top" ref="web" :style="'height:'+height+'px'" @onPostMessage="_message" />
+	</d-column>
+</template>
+
+<script>
+	var {
+		windowWidth,
+		platform
+	} = uni.getSystemInfoSync(),
+		cfg = require('./config.js');
+	var weexDom = weex.requireModule('dom');
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.添加 style-custom 属性, 容器自定义样式 
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * rich-text 富文本组件
+	 * @tutorial 
+	 * @property {String} html 富文本数据
+	 * @property {String,Number} width 宽度
+	 * @property {String,Number} min-width 最小宽度
+	 * @property {String,Number} max-width 最大宽度
+	 * @property {Boolean} autopause 是否在播放一个视频时自动暂停其他视频
+	 * @property {Boolean} autoscroll 是否自动给所有表格添加一个滚动层
+	 * @property {Boolean} autoset-title 是否自动将 title 标签中的内容设置到页面标题
+	 * @property {String} domain 图片、视频等链接的主域名
+	 * @property {Boolean} selectable 是否开启长按复制
+	 * @property {Object} tag-style 标签的默认样式
+	 * @property {Boolean} show-with-animation 是否使用渐显动画
+	 * @property {Boolean} use-anchor 是否使用锚点
+	 * @property {Object} style-custom 容器自定义样式 
+	 * @event {Function} parse 解析完成事件
+	 * @event {Function} load dom加载完成事件
+	 * @event {Function} ready 所有图片加载完毕事件
+	 * @event {Function} error 错误事件
+	 * @event {Function} imgtap 图片点击事件
+	 * @event {Function} linkpress 链接点击事件
+	 */
+	export default {
+		name: 'dRichText',
+		data() {
+			return {
+				height: 1,
+				nodes: []
+			}
+		},
+		props: {
+			width: {
+				type: [String, Number],
+				default: ''
+			},
+			minWidth: {
+				type: [String, Number],
+				default: ''
+			},
+			maxWidth: {
+				type: [String, Number],
+				default: ''
+			},
+			html: {
+				type: String, //要显示的 html 字符串
+				default: ''
+			},
+			autopause: {
+				type: Boolean, //是否允许播放视频时自动暂停其他视频
+				default: true
+			},
+			autoscroll: {
+				type: Boolean, //是否自动给 table 加一个滚动层（使表格可以单独滚动）
+				default: false
+			},
+			autosetTitle: {
+				type: Boolean, //是否自动将 title 标签的内容设置到页面标题上
+				default: true
+			},
+			domain: {
+				type: String, //主域名，设置后将对于图片地址将自动拼接主域名或协议名
+				default: ''
+			},
+			selectable: {
+				type: Boolean, //是否允许长按复制内容
+				default: false
+			},
+			tagStyle: {
+				type: Object, //设置标签的默认样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			},
+			showWithAnimation: {
+				type: Boolean, //是否使用渐显动画
+				default: false
+			},
+			useAnchor: {
+				type: Boolean, //是否使用页面内锚点
+				default: false
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			}
+		},
+		watch: {
+			html(html) {
+				this.setContent(html);
+			}
+		},
+		created() {
+			// 图片数组
+			this.imgList = [];
+			this.imgList.each = function(f) {
+				for (var i = 0, len = this.length; i < len; i++)
+					this.setItem(i, f(this[i], i, this));
+			}
+			this.imgList.setItem = function(i, src) {
+				if (i == void 0 || !src) return;
+
+				this[i] = src;
+				// 暂存 data src
+				if (src.includes('data:image')) {
+					var filePath, info = src.match(/data:image\/(\S+?);(\S+?),(.+)/);
+					if (!info) return;
+					filePath = `_doc/parser_tmp/${Date.now()}.${info[1]}`;
+					var bitmap = new plus.nativeObj.Bitmap();
+					bitmap.loadBase64Data(src, () => {
+						bitmap.save(filePath, {}, () => {
+							bitmap.clear()
+							this[i] = filePath;
+						})
+					})
+				}
+			}
+		},
+		mounted() {
+			this.document = this.$refs.web;
+			setTimeout(() => {
+				if (this.html) this.setContent(this.html);
+			}, 30)
+		},
+		beforeDestroy() {
+			this.imgList.each(src => {
+				if (src && src.includes('_doc')) {
+					plus.io.resolveLocalFileSystemURL(src, entry => {
+						entry.remove();
+					});
+				}
+			})
+			clearInterval(this._timer);
+		},
+		methods: {
+			// 设置富文本内容
+			setContent(html, append) {
+				if (!html)
+					return this.height = 1;
+				if (append)
+					this.$refs.web.evalJs("var b=document.createElement('div');b.innerHTML='" + html.replace(/'/g, "\\'") +
+						"';document.getElementById('parser').appendChild(b)");
+				else {
+					html =
+						'<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"><style>html,body{width:100%;height:100%;overflow:hidden}body{margin:0}</style><base href="' +
+						this.domain + '"><div id="parser"' + (this.selectable ? '>' : ' style="user-select:none">') + this._handleHtml(
+							html).replace(/\n/g, '\\n') +
+						'</div><script>"use strict";function e(e){if(window.__dcloud_weex_postMessage||window.__dcloud_weex_){var t={data:[e]};window.__dcloud_weex_postMessage?window.__dcloud_weex_postMessage(t):window.__dcloud_weex_.postMessage(JSON.stringify(t))}}document.body.onclick=function(){e({action:"click"})},' +
+						(this.showWithAnimation ? 'document.body.style.animation="_show .5s",' : '') +
+						'setTimeout(function(){e({action:"load",text:document.body.innerText,height:document.getElementById("parser").scrollHeight})},50);\x3c/script>';
+					if (platform == 'android') html = html.replace(/%/g, '%25');
+					this.$refs.web.evalJs("document.write('" + html.replace(/'/g, "\\'") + "');document.close()");
+				}
+				this.$refs.web.evalJs(
+					'var t=document.getElementsByTagName("title");t.length&&e({action:"getTitle",title:t[0].innerText});for(var o,n=document.getElementsByTagName("style"),r=1;o=n[r++];)o.innerHTML=o.innerHTML.replace(/body/g,"#parser");for(var a,c=document.getElementsByTagName("img"),s=[],i=0==c.length,d=0,l=0,g=0;a=c[l];l++)parseInt(a.style.width||a.getAttribute("width"))>' +
+					windowWidth +
+					'&&(a.style.height="auto"),a.onload=function(){++d==c.length&&(i=!0)},a.onerror=function(){++d==c.length&&(i=!0),' +
+					(cfg.errorImg ? 'this.src="' + cfg.errorImg + '",' : '') +
+					'e({action:"error",source:"img",target:this})},a.hasAttribute("ignore")||"A"==a.parentElement.nodeName||(a.i=g++,s.push(a.getAttribute("original-src")||a.src||a.getAttribute("data-src")),a.onclick=function(){e({action:"preview",img:{i:this.i,src:this.src}})});e({action:"getImgList",imgList:s});for(var u,m=document.getElementsByTagName("a"),f=0;u=m[f];f++)u.onclick=function(){var t,o=this.getAttribute("href");if("#"==o[0]){var n=document.getElementById(o.substr(1));n&&(t=n.offsetTop)}return e({action:"linkpress",href:o,offset:t}),!1};for(var h,y=document.getElementsByTagName("video"),v=0;h=y[v];v++)h.style.maxWidth="100%",h.onerror=function(){e({action:"error",source:"video",target:this})}' +
+					(this.autopause ? ',h.onplay=function(){for(var e,t=0;e=y[t];t++)e!=this&&e.pause()}' : '') +
+					';for(var _,p=document.getElementsByTagName("audio"),w=0;_=p[w];w++)_.onerror=function(){e({action:"error",source:"audio",target:this})};' +
+					(this.autoscroll ?
+						'for(var T,E=document.getElementsByTagName("table"),B=0;T=E[B];B++){var N=document.createElement("div");N.style.overflow="scroll",T.parentNode.replaceChild(N,T),N.appendChild(T)}' :
+						'') +
+					'var x=document.getElementById("parser");clearInterval(window.timer),window.timer=setInterval(function(){i&&clearInterval(window.timer),e({action:"ready",ready:i,height:x.scrollHeight})},350)'
+				)
+				this.nodes = [1];
+			},
+			// 获取文本内容
+			getText(ns = this.nodes) {
+				var txt = '';
+				txt = this._text;
+				return txt;
+			},
+			// 锚点跳转
+			in (obj) {
+				if (obj.page && obj.selector && obj.scrollTop) this._in = obj;
+			},
+			navigateTo(obj) {
+				if (!this.useAnchor) return obj.fail && obj.fail('Anchor is disabled');
+				if (!obj.id)
+					weexDom.scrollToElement(this.$refs.web);
+				else
+					this.$refs.web.evalJs('var pos=document.getElementById("' + obj.id +
+						'");if(pos)post({action:"linkpress",href:"#",offset:pos.offsetTop+' + (obj.offset || 0) + '})');
+				obj.success && obj.success();
+			},
+			_handleHtml(html, append) {
+				if (!append) {
+					// 处理 tag-style 和 userAgentStyles
+					var style = '<style>@keyframes _show{0%{opacity:0}100%{opacity:1}}img{max-width:100%}';
+					for (var item in cfg.userAgentStyles)
+						style += `${item}{${cfg.userAgentStyles[item]}}`;
+					for (item in this.tagStyle)
+						style += `${item}{${this.tagStyle[item]}}`;
+					style += '</style>';
+					html = style + html;
+				}
+				// 处理 rpx
+				if (html.includes('rpx'))
+					html = html.replace(/[0-9.]+\s*rpx/g, $ => (parseFloat($) * windowWidth / 750) + 'px');
+				return html;
+			},
+			_message(e) {
+				// 接收 web-view 消息
+				var d = e.detail.data[0];
+				switch (d.action) {
+					case 'load':
+						this.$emit('load');
+						this.height = d.height;
+						this._text = d.text;
+						break;
+					case 'getTitle':
+						if (this.autosetTitle)
+							uni.setNavigationBarTitle({
+								title: d.title
+							})
+						break;
+					case 'getImgList':
+						this.imgList.length = 0;
+						for (var i = d.imgList.length; i--;)
+							this.imgList.setItem(i, d.imgList[i]);
+						break;
+					case 'preview':
+						var preview = true;
+						d.img.ignore = () => preview = false;
+						this.$emit('imgtap', d.img);
+						if (preview)
+							uni.previewImage({
+								current: d.img.i,
+								urls: this.imgList
+							})
+						break;
+					case 'linkpress':
+						var jump = true,
+							href = d.href;
+						this.$emit('linkpress', {
+							href,
+							ignore: () => jump = false
+						})
+						if (jump && href) {
+							if (href[0] == '#') {
+								if (this.useAnchor)
+									weexDom.scrollToElement(this.$refs.web, {
+										offset: d.offset
+									})
+							} else if (href.includes('://'))
+								plus.runtime.openWeb(href);
+							else
+								uni.navigateTo({
+									url: href
+								})
+						}
+						break;
+					case 'error':
+						if (d.source == 'img' && cfg.errorImg)
+							this.imgList.setItem(d.target.i, cfg.errorImg);
+						this.$emit('error', {
+							source: d.source,
+							target: d.target
+						})
+						break;
+					case 'ready':
+						this.height = d.height;
+						if (d.ready) uni.createSelectorQuery().in(this).select('#_top').boundingClientRect().exec(res => {
+							this.rect = res[0];
+							this.$emit('ready', res[0]);
+						})
+						break;
+					case 'click':
+						this.$emit('click');
+						this.$emit('tap');
+				}
+			},
+		}
+	}
+</script>
+
+<style>
+	@keyframes _show {
+		0% {
+			opacity: 0;
+		}
+
+		100% {
+			opacity: 1;
+		}
+	}
+</style>

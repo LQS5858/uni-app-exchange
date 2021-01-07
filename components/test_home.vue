@@ -64,7 +64,6 @@ export default {
       console.log('路由跳转--');
       // this.$Router.push({ path: '/pages/test/test', query: { plan: 'private' } }) // -> /user/123
       this.$Router.push({ name: 'test', params: { plan: 'private' } }) // -> /user/123
-
     },
     async getBanner () { },
     async getRateTicker () {

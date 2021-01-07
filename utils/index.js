@@ -14,7 +14,6 @@ export default {
   },
   minus (x1, x2, precision = 2) {
     if (x1 === 0 && x2 === 0) return 0
-    // if (!x1 || !x2) return '--'
     if (!_.isNumber(Number(x1)) || !_.isNumber(Number(x2))) return '--'
     let _x1 = new BigNumber(x1)
     let sum = _x1.minus(x2)
@@ -23,7 +22,6 @@ export default {
   },
   times (x1, x2, precision = 2) {
     if (x1 === 0 || x2 === 0) return 0
-    if (!x1 || !x2) return '--'
     if (!_.isNumber(Number(x1)) || !_.isNumber(Number(x2))) return '--'
     let _x1 = new BigNumber(x1)
     let sum = _x1.multipliedBy(x2)
@@ -32,7 +30,6 @@ export default {
   },
   div (x1, x2, precision = 2) {
     if (x1 === 0 || x2 === 0) return 0
-    if (!x1 || !x2) return '--'
     if (!_.isNumber(Number(x1)) || !_.isNumber(Number(x2))) return '--'
     let _x1 = new BigNumber(x1)
     let sum = _x1.div(x2)

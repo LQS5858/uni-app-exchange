@@ -6,12 +6,16 @@ export default {
             memberKey: null,
             userInfo: {},
             rate: {},
+            theme: 'dark',
             businessInfo: {},
             historyTicker: [],
             curCurrency: {},
             curSymbol: null
         },
         mutations: {
+            CHANGE_THEME (state, data) {
+                state.theme = data
+            },
             SAVE_MANIFEST (state, data) {
                 state.manifest = data
             },

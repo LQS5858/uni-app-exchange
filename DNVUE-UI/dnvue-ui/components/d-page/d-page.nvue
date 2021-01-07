@@ -1,0 +1,109 @@
+<template>
+	<d-column :height="windowHeight" unit="px" :bg-custom="pageBgCustom">
+		<d-column :show="customNav" :bg="navBg" :bg-custom="navBgCustom" :bg-gradient="navBgGradient">
+			<d-row :height="statusBarHeight" unit="px"></d-row>
+			<slot name="nav"></slot>
+		</d-column>
+		<slot name="header"></slot>
+		<slot></slot>
+		<slot name="footer"></slot>
+	</d-column>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.优化出现页面级滚动条情况
+	 * 2.添加nav-bg-gradient属性，自定义导航栏渐变背景色
+	 * 
+	 * 版本1.1.0
+	 * 1.custom-nav-bg属性名称变更为 nav-bg ，自定义导航栏背景色（class）
+	 * 2.page-bg属性名称变更为 page-bg-custom，自定义页面背景色，示例 #000000
+	 * 3.添加 nav-bg-custom 属性，自定义背景颜色，示例 #000000
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * page 页面布局
+	 * @description 页面布局组件
+	 * @tutorial 
+	 * @property {Boolean} tabbar 当前页面是否原生tabbar,为配合预加载而设定，必填项
+	 * @property {Boolean} navbar 当前页面是否原生navbar,为配合预加载而设定，必填项
+	 * @property {Boolean} custom-nav 开启自定义导航栏
+	 * @property {String} nav-bg 自定义导航栏背景色（class）
+	 * @property {String} nav-bg-custom 自定义导航栏背景色，示例 #000000
+	 * @property {Array} nav-bg-gradient 自定义导航栏渐变背景色
+	 * @property {String} page-bg-custom 页面背景色，示例#000000
+	 */
+	export default {
+		name: "dPage",
+		props: {
+			tabbar: {
+				type: Boolean, //当前页面是否原生tabbar,为配合预加载而设定，必填项
+				default: false
+			},
+			navbar: {
+				type: Boolean, //当前页面是否原生navbar,为配合预加载而设定，必填项
+				default: true
+			},
+			customNav: {
+				type: Boolean, //开启自定义导航栏
+				default: false
+			},
+			navBg: {
+				type: String, //自定义导航栏背景色(class)
+				default: ''
+			},
+			navBgCustom: {
+				type: String, //自定义导航栏背景色，示例 #000000
+				default: ''
+			},
+			navBgGradient:{
+				type:Array, //自定义渐变背景色
+				default:function(){
+					return []
+				}
+			},
+			pageBgCustom: {
+				type: String, //页面背景色，示例 #000000
+				default: ''
+			}
+		},
+		data() {
+			return {
+				windowHeight: 0, //可用高度
+				statusBarHeight: 0 //系统状态栏
+			};
+		},
+		created() {
+			let sysinfo = uni.getSystemInfoSync();
+			this.statusBarHeight = sysinfo.statusBarHeight;
+			let screenHeight = sysinfo.screenHeight;
+			//多减0.1是为了兼容部分手机会出现滚动条的情况
+			if (this.tabbar && this.navbar) {
+				//当原生tabbar与原生导航栏都启用情况
+				this.windowHeight = screenHeight - 50 - 44.1 - this.statusBarHeight;
+			} else if (!this.tabbar && this.navbar) {
+				//当原生tabbar禁用且原生导航栏navba开启情况
+				this.windowHeight = screenHeight - 44.1 - this.statusBarHeight;
+			} else if (this.tabbar && !this.navbar) {
+				//当原生tabbar开启且原生导航栏navbar禁用情况
+				this.windowHeight = screenHeight - 50;
+			} else {
+				//当都禁用情况
+				this.windowHeight = screenHeight;
+			};
+			//当前可使用窗口高度
+			this.$emit("change", {
+				windowHeight: this.windowHeight
+			});
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

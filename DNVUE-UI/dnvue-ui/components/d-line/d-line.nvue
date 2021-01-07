@@ -1,0 +1,116 @@
+<template>
+	<d-row :show="show" :url="url" :padding="[0,32]" :height="height" bg="white" mode="middle" :border="borderBottom?'border-bottom':''"
+	 :hover="hover">
+		<d-icon :show="!leftImageState" :size="textSize+8" :icon="icon" :color="iconColor" />
+		<d-image :show="leftImageState" :src="icon" :width="textSize+30" :height="textSize+30" />
+		<d-text :bold="titleBold" :size="textSize" flex="1" :padding="[0,16]" :text="title" />
+		<d-text :padding="[0,8]" :size="textSize" :text="describe" color="tips" />
+		<d-badge :show="isDot" is-dot></d-badge>
+		<d-icon :size="textSize+2" icon="iconright" :show="isArrow" color="tips" />
+	</d-row>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 *版本1.1.1
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * line 单元行
+	 * @description 单元行组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏
+	 * @property {String} url 跳转路由
+	 * @property {Number, String} height 高度
+	 * @property {Boolean} hover 点击效果
+	 * @property {Boolean} border-bottom 底部边框
+	 * @property {String} icon 内置字体图标名或者图片地址
+	 * @property {String} icon-color 在icon为字体图标时生效
+	 * @property {String, Number} title 标题
+	 * @property {Boolean} title-bold 标题加粗
+	 * @property {Number, String} text-size 文本大小
+	 * @property {Boolean} is-dot 是否显示红点
+	 * @property {Number, String} describe 描述信息
+	 * @property {Boolean} is-arrow 是否显示右侧箭头
+	 */
+	export default {
+		name: "dLine",
+		props: {
+			show: {
+				type: Boolean,
+				default: true
+			},
+			url: {
+				type: String, //跳转路由
+				default: ''
+			},
+			height: {
+				type: [Number, String], //高度
+				default: 108
+			},
+			hover: {
+				type: Boolean, //点击效果
+				default: true
+			},
+			borderBottom: {
+				type: Boolean, //底部边框
+				default: true
+			},
+			icon: {
+				type: String, //左侧字体图标或者图片地址
+				default: 'iconvip'
+			},
+			iconColor: {
+				type: String, //字体图标颜色
+				default: 'theme'
+			},
+			title: {
+				type: [String, Number], //标题
+				default: 'DNVUE UI'
+			},
+			titleBold: {
+				type: Boolean, //标题加粗
+				default: false
+			},
+			textSize: {
+				type: [Number, String], //文本大小
+				default: 30
+			},
+			isDot: {
+				type: Boolean, //是否红点
+				default: false
+			},
+			describe: {
+				type: [Number, String], //描述信息
+				default: ''
+			},
+			isArrow: {
+				type: Boolean, //右侧箭头
+				default: true
+			}
+		},
+		data() {
+			return {
+				leftImageState: false
+			};
+		},
+		watch: {
+			icon: {
+				handler(newVal, oldVal) {
+					if (this.icon.indexOf("/") != -1) {
+						this.leftImageState = true
+					} else {
+						this.leftImageState = false
+					}
+				},
+				immediate: true,
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

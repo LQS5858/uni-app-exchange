@@ -1,0 +1,328 @@
+<template>
+	<text @click="click" v-if="show" :class="['color-'+color,'ellipsis-'+ellipsis,'text-'+align,bold?'text-bold':'','flex-'+flex,decoration?'text-decoration':'']"
+	 :style="style_text">{{text}}</text>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.添加 minWidth(最小宽度)、maxWidth(最大宽度)属性
+	 * 
+	 * 版本1.1.0
+	 * 1.添加 color-custom 属性，自定义文本颜色，示例 #000000
+	 * 
+	 * 版本1.0.0
+	 * 1.新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * text 文本组件
+	 * @description 文本组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏组件
+	 * @property {Number, String} text 字号(rpx)
+	 * @property {String} color = [main|content|tips|light|theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 文本颜色(class)
+	 *  @value main 一级文字/正文/主标题
+	 *  @value content 二级文字/副标/常规内容
+	 *  @value tips 三级文字/补充描述/辅助内容
+	 *  @value light 四级文字/占位内容
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} color-custom 自定义文本颜色，示例 #000000
+	 * @property {Number, String} flex 占位比例(1~12)
+	 * @property {Number, String} ellipsis 超出省略(1~12)
+	 * @property {String} align 文本位置	
+	 *  @value left 左侧
+	 *  @value center 居中
+	 *  @value right 右侧
+	 * @property {Number, String} line-height 行高
+	 * @property {Boolean} bold 文本加粗	
+	 * @property {Boolean} decoration 文本中间添加横线
+	 * @property {Number, String} width 宽度
+	 * @property {Arrar} margin 外边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {Arrar} padding 内边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {Boolean} stop 阻止事件冒泡
+	 * @property {Object} style-custom 自定义组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+	 * @event {Function()} click 点击事件
+	 */
+	export default {
+		name: "dText",
+		props: {
+			show: {
+				type: Boolean, //控制显示或者隐藏
+				default: true
+			},
+			text: {
+				type: [String, Number], //文本
+				default: ""
+			},
+			size: {
+				type: [String, Number], //字号(rpx)
+				default: 30
+			},
+			color: {
+				type: String, //文本颜色（class）
+				default: 'main'
+			},
+			colorCustom:{
+				type:String, //自定义文本颜色，示例 #000000
+				default:''
+			},
+			flex: {
+				type: [Number, String], //flex 占位比例
+				default: ""
+			},
+			ellipsis: {
+				type: [String, Number], //超出省略(1~12)
+				default: ""
+			},
+			align: {
+				type: String, //文本位置
+				default: "left"
+			},
+			lineHeight: {
+				type: [String, Number], //行高，为空时不进行编译
+				default: ""
+			},
+			bold: {
+				type: Boolean, //文本加粗
+				default: false
+			},
+			decoration: {
+				type: Boolean, //文本横向
+				default: false
+			},
+			width: {
+				type: [String, Number], //文本宽度
+				default: ""
+			},
+			minWidth: {
+				type: [String, Number], //最小宽度
+				default: ""
+			},
+			maxWidth: {
+				type: [String, Number], //最大宽度
+				default: ""
+			},
+			/*
+			 当数组[1]中只有1位时，为全部(上、右、下、左)边距。
+			 当数组[1,2]为2位时，数组第一位为上下边距，第二位为左右边距，
+			 当数组[1,2,3]为3位时，第一位为上边距，第二位为左右边距，第三位为下边距
+			 当数组[1,2,3,4]为4位时，第一位为上边距，第二位为右边距，第三位为下边距，第四位为左边距
+			 */
+			margin: {
+				type: Array, //外边距
+				default: function() {
+					return []
+				}
+			},
+			/*
+			 当数组[1]中只有1位时，为全部(上、右、下、左)边距。
+			 当数组[1,2]为2位时，数组第一位为上下边距，第二位为左右边距，
+			 当数组[1,2,3]为3位时，第一位为上边距，第二位为左右边距，第三位为下边距
+			 当数组[1,2,3,4]为4位时，第一位为上边距，第二位为右边距，第三位为下边距，第四位为左边距
+			 */
+			padding: {
+				type: Array, //内边距
+				default: function() {
+					return []
+				}
+			},
+			stop: {
+				type: Boolean, //阻止事件冒泡
+				default: false
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			}
+		},
+		computed: {
+			style_text() {
+				let styleList = { ...this.styleCustom,
+					'fontSize': `${this.size}rpx`
+				};
+				/* 自定义文本色 */
+				if (!!this.colorCustom) {
+					let colorCustom_temp = {
+						'color': this.colorCustom
+					};
+					styleList = Object.assign(styleList, colorCustom_temp);
+				};
+				/* 行高 */
+				if (!!this.lineHeight) {
+					let lineHeight_temp = {
+						'lineHeight': this.lineHeight + 'rpx'
+					};
+					styleList = Object.assign(styleList, lineHeight_temp);
+				};
+				/* 宽度 */
+				if (!!this.width) {
+					let width_temp = {
+						'width': this.width + 'rpx'
+					};
+					styleList = Object.assign(styleList, width_temp);
+				};
+				/* 最小宽度 */
+				if (!!this.minWidth) {
+					let minWidth_temp = {
+						minWidth: this.minWidth + this.unit
+					};
+					styleList = Object.assign(styleList, minWidth_temp);
+				};
+				/* 最大宽度 */
+				if (!!this.maxWidth) {
+					let maxWidth_temp = {
+						maxWidth: this.maxWidth + this.unit
+					};
+					styleList = Object.assign(styleList, maxWidth_temp);
+				};
+				/* 外边距 */
+				switch (this.margin.length) {
+					case 1:
+						let margin_one = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginBottom': this.margin[0] + 'rpx',
+							'marginLeft': this.margin[0] + 'rpx',
+							'marginRight': this.margin[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_one);
+						break;
+					case 2:
+						let margin_two = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginBottom': this.margin[0] + 'rpx',
+							'marginLeft': this.margin[1] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_two);
+						break;
+					case 3:
+						let margin_three = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx',
+							'marginBottom': this.margin[2] + 'rpx',
+							'marginLeft': this.margin[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_three);
+						break;
+					case 4:
+						let margin_four = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx',
+							'marginBottom': this.margin[2] + 'rpx',
+							'marginLeft': this.margin[3] + 'rpx',
+						};
+						styleList = Object.assign(styleList, margin_four);
+						break;
+					default:
+						break;
+				};
+				/* 内边距 */
+				switch (this.padding.length) {
+					case 1:
+						let padding_one = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingBottom': this.padding[0] + 'rpx',
+							'paddingLeft': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_one);
+						break;
+					case 2:
+						let padding_two = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingBottom': this.padding[0] + 'rpx',
+							'paddingLeft': this.padding[1] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_two);
+						break;
+					case 3:
+						let padding_three = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx',
+							'paddingBottom': this.padding[2] + 'rpx',
+							'paddingLeft': this.padding[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_three);
+						break;
+					case 4:
+						let padding_four = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx',
+							'paddingBottom': this.padding[2] + 'rpx',
+							'paddingLeft': this.padding[3] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_four);
+						break;
+					default:
+						break;
+				};
+				return styleList;
+			}
+		},
+		data() {
+			return {
+
+			};
+		},
+		methods: {
+			click(event) {
+				this.$emit('click');
+				if (this.stop) {
+					event.stopPropagation();
+				}
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

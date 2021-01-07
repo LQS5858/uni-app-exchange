@@ -1,0 +1,186 @@
+<template>
+	<view v-if="isShow" ref="transition" class="d-transition" :class="[ani]" :style="'transform:' +transform+';'+stylesObject"
+	 @tap.stop="change">
+		<slot></slot>
+	</view>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * Transition 过渡动画
+	 * @description 简单过渡动画组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制组件显示或隐藏
+	 * @property {Array} modeClass = [fade|slide-top|slide-right|slide-bottom|slide-left|zoom-in|zoom-out] 过渡动画类型
+	 *  @value fade 渐隐渐出过渡
+	 *  @value slide-top 由上至下过渡
+	 *  @value slide-right 由右至左过渡
+	 *  @value slide-bottom 由下至上过渡
+	 *  @value slide-left 由左至右过渡
+	 *  @value zoom-in 由小到大过渡
+	 *  @value zoom-out 由大到小过渡
+	 * @property {Number} duration 过渡动画持续时间
+	 * @property {Object} styles 组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+	 */
+	/**
+	 *当前组件为uni-app官方过渡动画组件，只是经过简单的修剪而成，详细的过渡动画组件请查看uni-app官方组件uni-transition组件
+	 **/
+	const animation = uni.requireNativePlugin('animation');
+	export default {
+		name: 'dTransition',
+		props: {
+			show: {
+				type: Boolean,
+				default: false
+			},
+			modeClass: {
+				type: Array,
+				default () {
+					return []
+				}
+			},
+			duration: {
+				type: Number,
+				default: 300
+			},
+			styles: {
+				type: Object,
+				default () {
+					return {}
+				}
+			}
+		},
+		data() {
+			return {
+				isShow: false,
+				transform: '',
+				ani: ''
+			};
+		},
+		watch: {
+			show: {
+				handler(newVal) {
+					if (newVal) {
+						this.open()
+					} else {
+						this.close()
+					}
+				},
+				immediate: true
+			}
+		},
+		computed: {
+			stylesObject() {
+				let styles = {
+					...this.styles,
+					'transition-duration': this.duration / 1000 + 's'
+				};
+				let transfrom = '';
+				for (let i in styles) {
+					let line = this.toLine(i);
+					transfrom += line + ':' + styles[i] + ';';
+				};
+				return transfrom;
+			}
+		},
+		methods: {
+			change(event) {
+				this.$emit('click', {
+					detail: this.isShow
+				});
+				event.stopPropagation();
+			},
+			open() {
+				this.isShow = true;
+				this.transform = '';
+				this.ani = '';
+				for (let i in this.getTranfrom(false)) {
+					if (i === 'opacity') {
+						this.ani = 'fade-in';
+					} else {
+						this.transform += `${this.getTranfrom(false)[i]}`;
+					};
+				};
+				this.$nextTick(() => {
+					this._animation(true);
+				});
+			},
+			close() {
+				this._animation(false);
+			},
+			_animation(type) {
+				let styles = this.getTranfrom(type);
+				animation.transition(this.$refs['transition'], {
+					styles,
+					duration: this.duration, //ms
+					timingFunction: 'ease',
+					needLayout: false,
+					delay: 0 //ms
+				}, () => {
+					if (!type) {
+						this.isShow = false;
+					};
+					this.$emit('change', {
+						detail: this.isShow
+					});
+				})
+			},
+			getTranfrom(type) {
+				let styles = {
+					transform: ''
+				};
+				this.modeClass.forEach((mode) => {
+					switch (mode) {
+						case 'fade':
+							styles.opacity = type ? 1 : 0;
+							break;
+						case 'slide-top':
+							styles.transform += `translateY(${type?'0':'-100%'})`;
+							break;
+						case 'slide-right':
+							styles.transform += `translateX(${type?'0':'100%'})`;
+							break;
+						case 'slide-bottom':
+							styles.transform += `translateY(${type?'0':'100%'})`;
+							break;
+						case 'slide-left':
+							styles.transform += `translateX(${type?'0':'-100%'})`;
+							break;
+						case 'zoom-in':
+							styles.transform += `scale(${type?1:0.8})`;
+							break;
+						case 'zoom-out':
+							styles.transform += `scale(${type?1:1.2})`;
+							break;
+					};
+				});
+				return styles;
+			},
+			toLine(name) {
+				return name.replace(/([A-Z])/g, "-$1").toLowerCase();
+			}
+		}
+	}
+</script>
+
+<style lang="scss" scoped>
+	.d-transition {
+		transition-timing-function: ease;
+		transition-duration: 0.3s;
+		transition-property: transform, opacity;
+	}
+
+	.fade-in {
+		opacity: 0;
+	}
+
+	.fade-active {
+		opacity: 1;
+	}
+</style>

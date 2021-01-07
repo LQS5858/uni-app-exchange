@@ -1,0 +1,683 @@
+<template>
+	<view v-if="show" :style="style_row" :class="['bg-'+bg,'row-'+mode,'position-'+position,'flex-'+flex,border]" @click="click"
+	 @longpress="longpress" @touchstart="start" @touchend="end" @touchcancel="cancel" @touchmove="move">
+		<slot></slot>
+		<view @click="trigger" v-if="state && hover || disabled" :style="style_hover" class="hover"></view>
+	</view>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.1
+	 * 1.添加属性 border-custom 自定义边框颜色，示例 ['2rpx','#000000','left']  || ['2rpx','#000000']
+	 * 2.添加 @touchstart、@touchend、@touchcancel、@touchmove事件
+	 * 3.添加 hover 属性，点击效果，默认false
+	 * 4.添加 disabled 禁用效果，默认false
+	 * 5.添加 delta 属性，当 open-type 为 'navigateBack' 时有效，表示回退的层数,默认为1
+	 * 6.navigate 属性变更 open-type
+	 * 7.添加 hover-rgba 属性，点击状态颜色，默认rgba(205,205,205,0.2)
+	 * 8.wh-uni 属性变更 unit ，radius、margin、padding 属性不参与单位置换
+	 * 9.添加 bg-gradient 属性，自定义渐变背景色，示例:['left','#000000','#FFFFFF']
+	 * 10.添加 min-width(最小宽度)、max-width(最大宽度)、min-height(最小高度)、maxHeight(最大高度)
+	 * 11.添加 left、right、top、bottom 容器距离左、右、上、下边缘
+	 * 
+	 * 1.1.0
+	 * 1.添加属性 bg-custom 自定义背景颜色，示例: #000000'
+	 * 
+	 * 版本1.0.0
+	 * 1.新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * row 行布局
+	 * @description 行布局组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏组件
+	 * @property {String} mode = [nowrap|reverse-nowrap|wrap|reverse-wrap|start|center|end|space-between|space-around|top|middle|bottom|middle-center|middle-around|middle-between] 布局类型
+	 *  @value nowrap 超出不换行
+	 *  @value reverse-nowrap 超出不换行（反向）
+	 *  @value wrap 超出换行
+	 *  @value reverse-wrap 超出换行(反向)
+	 *  @value start 水平对齐(靠左)
+	 *  @value center 水平对齐(居中)
+	 *  @value end 水平对齐(靠右)
+	 *  @value space-between 水平对齐(两端)
+	 *  @value space-around 水平对齐(两端留空)
+	 *  @value top 垂直对齐(靠顶部)
+	 *  @value middle 垂直对齐(中间)
+	 *  @value bottom 垂直对齐(靠底部)
+	 *  @value middle-center 垂直居中
+	 *  @value middle-around 垂直水平对齐(两端留空)
+	 *  @value middle-between 垂直水平对齐(两端)
+	 * @property {Arrar} radius 圆角尺寸(rpx)，数组形式，写法[1]/[1,2]/[1,2,3,4]
+	 * @property {Arrar} margin 外边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {Arrar} padding 内边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {String} position = [relative|absolute|fixed|sticky] 定位
+	 * @property {String} border = [border|border-left|border-right|border-top|border-bottom|border-deep|border-deep-left|border-deep-right|border-deep-top|border-deep-bottom|border-shallow|border-shallow-left|border-shallow-right|border-shallow-top|border-shallow-bottom|border-light|border-light-left|border-light-right|border-light-top|border-light-bottom] 边框颜色
+	 *  @value border 中性色(全)
+	 *  @value border-left 中性色(左)
+	 *  @value border-right 中性色(右)
+	 *  @value border-top 中性色(上)
+	 *  @value border-bottom 中性色(下)
+	 *  @value border-deep 深色(全)
+	 *  @value border-deep-left 深色(左)
+	 *  @value border-deep-right 深色(右)
+	 *  @value border-deep-top 深色(上)
+	 *  @value border-deep-bottom 深色(下)
+	 *  @value border-shallow 浅色(全)
+	 *  @value border-shallow-left 浅色(左)
+	 *  @value border-shallow-right 浅色(右)
+	 *  @value border-shallow-top 浅色(上)
+	 *  @value border-shallow-bottom 浅色(下)
+	 *  @value border-light 淡色(全)
+	 *  @value border-light-left 淡色(左)
+	 *  @value border-light-right 淡色(右)
+	 *  @value border-light-top 淡色(上)
+	 *  @value border-light-bottom 淡色(下)
+	 * @property {Array} border-custom 自定义边框，示例 ['2rpx','#000000','left']  || ['2rpx','#000000']
+	 * @property {Number, String} flex 占位比例
+	 * @property {String} url 路由
+	 * @property {String} open-type = [navigate|redirect|reLaunch|switchTab|navigateBack] 路由类型
+	 *  @value navigate 保留当前页面，跳转到应用内的某个页面，使用uni.navigateBack可以返回到原页面
+	 *  @value redirect 关闭当前页面，跳转到应用内的某个页面
+	 *  @value reLaunch 关闭所有页面，打开到应用内的某个页面
+	 *  @value switchTab 跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
+	 *  @value navigateBack 关闭当前页面，返回上一页面或多级页面，当前类型下，url类型参数应为数字类型(Number)
+	 * @property {Number} delta 当 open-type 为 'navigateBack' 时有效，表示回退的层数,默认为 1
+	 * @property {String} animation-type 当 open-type 为 navigate、navigateBack 时有效，窗口的显示/关闭动画效果
+	 * @property {Number} animation-duration 当 open-type 为 navigate、navigateBack 时有效，窗口显示/关闭动画的持续时间。
+	 * @property {String} bg = [theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 背景颜色
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} bg-custom 自定义背景色，格式示例 #000000
+	 * @property {Boolean} stop 阻止事件冒泡
+	 * @property {Number, String} width 宽度
+	 * @property {Number, String} min-width 最小宽度
+	 * @property {Number, String} max-width 最大宽度
+	 * @property {Number, String} height 高度
+	 * @property {Number, String} min-height 最小高度
+	 * @property {Number, String} max-height 最大高度
+	 * @property {String} unit = [px|rpx] 宽高单位，默认rpx
+	 * @property {Object} style-custom 自定义组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+	 * @property {Boolean} disabled 是否禁用
+	 * @property {Boolean} hover 点击效果
+	 * @property {String} hover-rgba 点击效果颜色，默认 rgba(205,205,205,0.2)
+	 * @property {Number, String} left 容器距离左边缘
+	 * @property {Number, String} right 容器距离右边缘
+	 * @property {Number, String} top 容器距离上边缘
+	 * @property {Number, String} bottom 容器距离下边缘
+	 * @property {Array} bg-gradient 自定义渐变颜色，示例 ['left','#000000','#FFFFFF']
+	 * @event {Function()} click 点击事件
+	 * @event {Function()} longclick 长按事件
+	 * @event {Function()} touchstart 触摸开始，多点触控，后面的手指同样会触发
+	 * @event {Function()} touchmove 接触点改变，滑动时
+	 * @event {Function()} touchend 触摸结束，手指离开屏幕时
+	 * @event {Function()} touchcancel 触摸被取消，当系统停止跟踪触摸的时候触发
+	 */
+	export default {
+		name: "dRow",
+		props: {
+			show: {
+				type: Boolean, //控制显示或者隐藏
+				default: true
+			},
+			mode: {
+				type: String, //布局类型
+				default: "nowrap"
+			},
+			radius: {
+				type: Array, //圆角
+				default: function() {
+					return []
+				}
+			},
+			margin: {
+				type: Array, //外边距
+				default: function() {
+					return []
+				}
+			},
+			padding: {
+				type: Array, //内边距
+				default: function() {
+					return []
+				}
+			},
+			position: {
+				type: String, //定位类型
+				default: ""
+			},
+			border: {
+				type: String, //边框（class）
+				default: ""
+			},
+			borderCustom: {
+				type: Array, //自定义边框
+				default: function() {
+					return []
+				}
+			},
+			flex: {
+				type: [Number, String], //flex 占位比例
+				default: ""
+			},
+			url: {
+				type: String, //路由
+				default: ""
+			},
+			delta: {
+				type: Number, //当 open-type 为 'navigateBack' 时有效，表示回退的层数
+				default: 1
+			},
+			openType: {
+				type: String, //路由类型
+				default: "navigate"
+			},
+			animationType: {
+				type: String,
+				default: '' //当 open-type 为 navigate、navigateBack 时有效，窗口的显示/关闭动画效果
+			},
+			animationDuration: {
+				type: Number,
+				default: 300
+			},
+			bg: {
+				type: String, //背景颜色（class）
+				default: ""
+			},
+			bgCustom: {
+				type: String, //自定义背景色，示例 #000000
+				default: ''
+			},
+			stop: {
+				type: Boolean, //阻止事件冒泡
+				default: false
+			},
+			width: {
+				type: [String, Number], //宽度
+				default: ""
+			},
+			minWidth: {
+				type: [String, Number], //最小宽度
+				default: ""
+			},
+			maxWidth: {
+				type: [String, Number], //最大宽度
+				default: ""
+			},
+			height: {
+				type: [String, Number], //高度
+				default: ""
+			},
+			minHeight: {
+				type: [String, Number], //最小高度
+				default: ""
+			},
+			maxHeight: {
+				type: [String, Number], //最大高度
+				default: ""
+			},
+			unit: {
+				type: String, //宽高单位
+				default: "rpx"
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			},
+			disabled: {
+				type: Boolean, //是否禁用
+				default: false
+			},
+			hover: {
+				type: Boolean, //点击效果
+				default: false
+			},
+			hoverRgba: {
+				type: String, //点击效果颜色
+				default: 'rgba(205,205,205,0.2)'
+			},
+			left: {
+				type: [String, Number], //容器距离左边缘
+				default: ""
+			},
+			right: {
+				type: [String, Number], //容器距离右边缘
+				default: ""
+			},
+			top: {
+				type: [String, Number], //容器距离上边缘
+				default: ""
+			},
+			bottom: {
+				type: [String, Number], //容器距离下边缘
+				default: ""
+			},
+			bgGradient: {
+				type: Array, //渐变颜色
+				default: function() {
+					return []
+				}
+			}
+		},
+		data() {
+			return {
+				state: false
+			};
+		},
+		computed: {
+			style_row() {
+				let styleList = { ...this.styleCustom
+				};
+				/* 自定义渐变背景色 */
+				switch (this.bgGradient.length) {
+					case 3:
+						let bgGradient_three = {
+							backgroundImage: `linear-gradient(to ${this.bgGradient[0]}, ${this.bgGradient[1]}, ${this.bgGradient[2]})`
+						};
+						styleList = Object.assign(styleList, bgGradient_three);
+						break;
+					default:
+						break;
+				}
+				/* 自定义边框颜色 */
+				switch (this.borderCustom.length) {
+					case 1:
+						let borderCustom_one = {
+							borderWidth: this.borderCustom[0]
+						};
+						styleList = Object.assign(styleList, borderCustom_one);
+						break;
+					case 2:
+						let borderCustom_two = {
+							borderWidth: this.borderCustom[0],
+							borderColor: this.borderCustom[1]
+						};
+						styleList = Object.assign(styleList, borderCustom_two);
+						break;
+					case 3:
+						let borderCustom_three = {
+							borderColor: this.borderCustom[1]
+						};
+						if (this.borderCustom[2] == 'left') {
+							borderCustom_three.borderLeftWidth = this.borderCustom[0]
+						} else if (this.borderCustom[2] == 'right') {
+							borderCustom_three.borderRightWidth = this.borderCustom[0]
+						} else if (this.borderCustom[2] == 'top') {
+							borderCustom_three.borderTopWidth = this.borderCustom[0]
+						} else if (this.borderCustom[2] == 'bottom') {
+							borderCustom_three.borderBottomWidth = this.borderCustom[0]
+						}
+						styleList = Object.assign(styleList, borderCustom_three);
+						break;
+					default:
+						break;
+				};
+				/* 自定义背景色 */
+				if (!!this.bgCustom) {
+					let bgCustom_temp = {
+						backgroundColor: this.bgCustom
+					};
+					styleList = Object.assign(styleList, bgCustom_temp);
+				};
+				/* 宽度 */
+				if (!!this.width) {
+					let width_temp = {
+						width: this.width + this.unit
+					};
+					styleList = Object.assign(styleList, width_temp);
+				};
+				/* 最小宽度 */
+				if (!!this.minWidth) {
+					let minWidth_temp = {
+						minWidth: this.minWidth + this.unit
+					};
+					styleList = Object.assign(styleList, minWidth_temp);
+				};
+				/* 最大宽度 */
+				if (!!this.maxWidth) {
+					let maxWidth_temp = {
+						maxWidth: this.maxWidth + this.unit
+					};
+					styleList = Object.assign(styleList, maxWidth_temp);
+				};
+				/* 高度 */
+				if (!!this.height) {
+					let height_temp = {
+						height: this.height + this.unit
+					};
+					styleList = Object.assign(styleList, height_temp);
+				};
+				/* 最小高度 */
+				if (!!this.minHeight) {
+					let minHeight_temp = {
+						minHeight: this.minHeight + this.unit
+					};
+					styleList = Object.assign(styleList, minHeight_temp);
+				};
+				/* 最大高度 */
+				if (!!this.maxHeight) {
+					let maxHeight_temp = {
+						maxHeight: this.maxHeight + this.unit
+					};
+					styleList = Object.assign(styleList, maxHeight_temp);
+				};
+				/* 容器距离左边缘 */
+				if (!!this.left) {
+					let left_temp = {
+						left: this.left + this.unit
+					};
+					styleList = Object.assign(styleList, left_temp);
+				};
+				/* 容器距离右边缘 */
+				if (!!this.right) {
+					let right_temp = {
+						right: this.right + this.unit
+					};
+					styleList = Object.assign(styleList, right_temp);
+				};
+				/* 容器距离上边缘 */
+				if (!!this.top) {
+					let top_temp = {
+						top: this.top + this.unit
+					};
+					styleList = Object.assign(styleList, top_temp);
+				};
+				/* 容器距离下边缘 */
+				if (!!this.bottom) {
+					let bottom_temp = {
+						bottom: this.bottom + this.unit
+					};
+					styleList = Object.assign(styleList, bottom_temp);
+				};
+				/* 外边距 */
+				switch (this.margin.length) {
+					case 1:
+						let margin_one = {
+							marginTop: this.margin[0] + 'rpx',
+							marginBottom: this.margin[0] + 'rpx',
+							marginLeft: this.margin[0] + 'rpx',
+							marginRight: this.margin[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_one);
+						break;
+					case 2:
+						let margin_two = {
+							marginTop: this.margin[0] + 'rpx',
+							marginBottom: this.margin[0] + 'rpx',
+							marginLeft: this.margin[1] + 'rpx',
+							marginRight: this.margin[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_two);
+						break;
+					case 3:
+						let margin_three = {
+							marginTop: this.margin[0] + 'rpx',
+							marginRight: this.margin[1] + 'rpx',
+							marginBottom: this.margin[2] + 'rpx',
+							marginLeft: this.margin[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, margin_three);
+						break;
+					case 4:
+						let margin_four = {
+							marginTop: this.margin[0] + 'rpx',
+							marginRight: this.margin[1] + 'rpx',
+							marginBottom: this.margin[2] + 'rpx',
+							marginLeft: this.margin[3] + 'rpx',
+						};
+						styleList = Object.assign(styleList, margin_four);
+						break;
+					default:
+						break;
+				};
+				/* 外边距 */
+				switch (this.padding.length) {
+					case 1:
+						let padding_one = {
+							paddingTop: this.padding[0] + 'rpx',
+							paddingBottom: this.padding[0] + 'rpx',
+							paddingLeft: this.padding[0] + 'rpx',
+							paddingRight: this.padding[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_one);
+						break;
+					case 2:
+						let padding_two = {
+							paddingTop: this.padding[0] + 'rpx',
+							paddingBottom: this.padding[0] + 'rpx',
+							paddingLeft: this.padding[1] + 'rpx',
+							paddingRight: this.padding[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_two);
+						break;
+					case 3:
+						let padding_three = {
+							paddingTop: this.padding[0] + 'rpx',
+							paddingRight: this.padding[1] + 'rpx',
+							paddingBottom: this.padding[2] + 'rpx',
+							paddingLeft: this.padding[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_three);
+						break;
+					case 4:
+						let padding_four = {
+							paddingTop: this.padding[0] + 'rpx',
+							paddingRight: this.padding[1] + 'rpx',
+							paddingBottom: this.padding[2] + 'rpx',
+							paddingLeft: this.padding[3] + 'rpx'
+						};
+						styleList = Object.assign(styleList, padding_four);
+						break;
+					default:
+						break;
+				};
+				/* 圆角 */
+				switch (this.radius.length) {
+					case 1:
+						let radius_one = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[0] + 'rpx',
+							borderBottomLeftRadius: this.radius[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_one);
+						break;
+					case 2:
+						let radius_two = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[1] + 'rpx',
+							borderBottomLeftRadius: this.radius[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_two);
+						break;
+					case 4:
+						let radius_four = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[1] + 'rpx',
+							borderBottomRightRadius: this.radius[2] + 'rpx',
+							borderBottomLeftRadius: this.radius[3] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_four);
+						break;
+					default:
+						break;
+				};
+				return styleList;
+			},
+			style_hover(){
+				let styleList = {
+					backgroundColor: this.hoverRgba
+				};
+				/* 圆角 */
+				switch (this.radius.length) {
+					case 1:
+						let radius_one = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[0] + 'rpx',
+							borderBottomLeftRadius: this.radius[0] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_one);
+						break;
+					case 2:
+						let radius_two = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[0] + 'rpx',
+							borderBottomRightRadius: this.radius[1] + 'rpx',
+							borderBottomLeftRadius: this.radius[1] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_two);
+						break;
+					case 4:
+						let radius_four = {
+							borderTopLeftRadius: this.radius[0] + 'rpx',
+							borderTopRightRadius: this.radius[1] + 'rpx',
+							borderBottomRightRadius: this.radius[2] + 'rpx',
+							borderBottomLeftRadius: this.radius[3] + 'rpx'
+						};
+						styleList = Object.assign(styleList, radius_four);
+						break;
+					default:
+						break;
+				};
+				return styleList;
+			}
+		},
+		methods: {
+			//接触点改变，滑动时
+			move(e) {
+				this.$emit("touchmove", e);
+			},
+			//触摸开始，多点触控，后面的手指同样会触发
+			start() {
+				if (!this.disabled) {
+					this.state = true;
+				}
+				this.$emit("touchstart");
+			},
+			//触摸结束，手指离开屏幕时
+			end() {
+				this.state = false;
+				this.$emit("touchend");
+			},
+			//触摸被取消，当系统停止跟踪触摸的时候触发
+			cancel() {
+				this.state = false; //触摸被打断时回填按钮状态
+				this.$emit("touchcancel");
+			},
+			/* 点击事件 */
+			click(event) {
+				this.$emit("click");
+				//阻止事件冒泡
+				if (this.stop) {
+					event.stopPropagation();
+				};
+				switch (this.openType) {
+					case 'navigateBack':
+						uni.navigateBack({
+							delta: this.delta,
+							animationType: this.animationType || 'pop-out',
+							animationDuration: this.animationDuration
+						})
+						break;
+					default:
+						if (!!this.url) { //当路由不为空跳转
+							switch (this.openType) {
+								case 'navigate': //保留当前页面，跳转到应用内的某个页面
+									uni.navigateTo({
+										url: this.url,
+										animationType: this.animationType || 'pop-in',
+										animationDuration: this.animationDuration
+									});
+									break;
+								case 'redirect': //关闭当前页面，跳转到应用内的某个页面
+									uni.redirectTo({
+										url: this.url
+									});
+									break;
+								case 'reLaunch': //关闭所有页面，打开到应用内的某个页面
+									uni.reLaunch({
+										url: this.url
+									});
+									break;
+								case 'switchTab': //跳转到 tabBar 页面，并关闭其他所有非 tabBar 页面
+									uni.switchTab({
+										url: this.url
+									});
+									break;
+								default:
+									console.error("open-type属性参数不正确,参数应为navigate,redirect,reLaunch,switchTab,navigateBack")
+									break;
+							}
+						}
+						break;
+				}
+			},
+			//长按事件
+			longpress(event) {
+				this.$emit('longpress');
+				event.stopPropagation();
+			},
+			trigger(event) { //禁止底层冒泡事件触发
+				event.stopPropagation();
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+	.hover {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+</style>

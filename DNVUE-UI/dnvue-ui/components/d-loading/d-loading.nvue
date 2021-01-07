@@ -1,0 +1,75 @@
+<template>
+	<d-row mode="middle-center" :padding="[18,0]">
+		<d-image :show="status == 1" :width="srcSize" :height="srcSize" :src="src"></d-image>
+		<d-text :color="color" :color-custom="colorCustom" :size="size" :text="list[status]"></d-text>
+	</d-row>
+</template>
+
+<script>
+	import imageBase64 from "../../tool/imageBase64.js"
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.0
+	 * 1.添加 color-custom属性，自定义提示内容颜色，示例 #000000
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * loading 上拉加载
+	 * @description 上拉加载组件
+	 * @tutorial 
+	 * @property {Array} list 数据，数据格式:['上拉加载更多信息', '加载中...', '已经加载全部信息']
+	 * @property {String} src 加载中的 GIF 图片路径
+	 * @property {String, Number} src-size GIF图片尺寸
+	 * @property {String} color 文本颜色(class)
+	 * @property {String} color-custom 自定义文本颜色，示例 #000000
+	 * @property {String, Number} size 文本字号
+	 * @property {String, Number} status 状态
+	 */
+	export default {
+		name: "dLoading",
+		props: {
+			list: {
+				type: Array,
+				default: function() {
+					return ['上拉加载更多信息', '加载中...', '已经加载全部信息']
+				}
+			},
+			src: {
+				type: String,
+				default: imageBase64.button_gif
+			},
+			srcSize: {
+				type: [String, Number], //图片尺寸
+				default: 44
+			},
+			color: {
+				type: String, //文本颜色
+				default: 'tips'
+			},
+			colorCustom: {
+				type: String, //自定义文本颜色
+				default: ''
+			},
+			size: {
+				type: [String, Number], //文本字号
+				default: 30
+			},
+			status: {
+				type: [String, Number], //状态
+				default: 0
+			}
+		},
+		data() {
+			return {
+
+			};
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

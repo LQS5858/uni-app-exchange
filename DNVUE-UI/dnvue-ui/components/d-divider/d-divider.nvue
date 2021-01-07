@@ -1,0 +1,85 @@
+<template>
+	<d-row mode="middle-center" :show="show" :height="height">
+		<d-row :height="borderHeight" :bg="borderColor" :bg-custom="borderColorCustom" :width="halfWidth"></d-row>
+		<d-text :padding="[0,24]" :size="size" :text="text" :color-custom="colorCustom" :color="color"></d-text>
+		<d-row :height="borderHeight" :bg="borderColor" :width="halfWidth"></d-row>
+	</d-row>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 *版本1.1.1
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * divider 分割线
+	 * @description 分割线组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示隐藏
+	 * @property {Number, String} half-width 边框宽度
+	 * @property {String} border-color 边框颜色
+	 * @property {String} border-color-custom 自定义边框颜色
+	 * @property {Number, String} border-height 边框高度
+	 * @property {Number, String} text 文本内容
+	 * @property {Number, String} size 文本大小
+	 * @property {String} color 文本颜色
+	 * @property {String} color-custom 自定义文本颜色
+	 * @property {Number, String} height 分割线组件高度
+	 */
+	export default {
+		name: 'dDivider',
+		props: {
+			show:{
+				type:Boolean, //控制显示或隐藏
+				default:true
+			},
+			halfWidth: {
+				type: [Number, String], //边框宽度
+				default: 200
+			},
+			borderColor: {
+				type: String, //边框颜色
+				default: 'gray-shallow'
+			},
+			borderColorCustom: {
+				type: String, //自定义边框颜色
+				default: ''
+			},
+			borderHeight: {
+				type: [Number, String], //边框高度
+				default: 4
+			},
+			text: {
+				type: [Number, String], //文本内容
+				default: 'DNVUE UI'
+			},
+			size: {
+				type: [Number, String], //文本大小
+				default: 28
+			},
+			color: {
+				type: String, //文本颜色
+				default: 'tips'
+			},
+			colorCustom: {
+				type: String, //自定义文本颜色
+				default: ''
+			},
+			height:{
+				type:[Number,String], //分割线组件高度
+				default:77
+			}
+		},
+		data() {
+			return {
+
+			};
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

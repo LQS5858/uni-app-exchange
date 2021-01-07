@@ -1,0 +1,1697 @@
+<template>
+	<view v-if="show">
+		<text @click="click" v-for="(item,index) in iconfont" :key="index" v-if="icon==item.icon" :style="style_icon" :class="['dIcon','color-'+color,bold?'text-bold':'']">{{item.unicode}}</text>
+	</view>
+</template>
+
+<script>
+	/****************** 组件更新日志 ******************/
+	/** 
+	 * 版本1.1.0
+	 * 1.添加colo-custom 属性，自定义图标颜色，示例 #000000
+	 * 
+	 *版本1.0.0
+	 * 新增组件
+	 */
+	/****************** 属性提示 ******************/
+	/**
+	 * icon 图标
+	 * @description 图标组件
+	 * @tutorial 
+	 * @property {Boolean} show 控制显示或者隐藏
+	 * @property {String} icon 图标名称
+	 * @property {String, Number} size 图标尺寸
+	 * @property {String} color = [main|content|tips|light|theme|theme-deep|theme-shallow|theme-light|black|black-deep|black-shallow|black-light|white|white-deep|white-shallow|white-light|gray|gray-deep|gray-shallow|gray-light|red|red-deep|red-shallow|red-light|orange|orange-deep|orange-shallow|orange-light|yellow|yellow-deep|yellow-shallow|yellow-light|green|green-deep|green-shallow|green-light|cyan|cyan-deep|cyan-shallow|cyan-light|blue|blue-deep|blue-shallow|blue-light|purple|purple-deep|purple-shallow|purple-light] 文本颜色
+	 *  @value main 一级文字/正文/主标题
+	 *  @value content 二级文字/副标/常规内容
+	 *  @value tips 三级文字/补充描述/辅助内容
+	 *  @value light 四级文字/占位内容
+	 *  @value theme 主题(中性色)
+	 *  @value theme-deep 主题(深色)
+	 *  @value theme-shallow 主题(浅色)
+	 *  @value theme-light 主题(淡色)
+	 * 	@value black 黑色(中性色)
+	 * 	@value black-deep 黑色(深色)
+	 * 	@value black-shallow 黑色(浅色)
+	 * 	@value black-light 黑色(淡色)
+	 * 	@value white 白色(中性色)
+	 * 	@value white-deep 白色(深色)
+	 * 	@value white-shallow 白色(浅色)
+	 * 	@value white-light 白色(淡色)
+	 * 	@value gray 灰色(中性色)
+	 * 	@value gray-deep 灰色(深色)
+	 * 	@value gray-shallow 灰色(浅色)
+	 * 	@value gray-light 灰色(淡色)
+	 *  @value red 红色(中性色)
+	 *  @value red-deep 红色(深色)
+	 *  @value red-shallow 红色(浅色)
+	 *  @value red-light 红色(淡色)
+	 *  @value orange 橙色(中性色)
+	 *  @value orange-deep 橙色(深色)
+	 *  @value orange-shallow 橙色(浅色)
+	 *  @value orange-light 橙色(淡色)
+	 *  @value yellow 黄色(中性色)
+	 *  @value yellow-deep 黄色(深色)
+	 *  @value yellow-shallow 黄色(浅色)
+	 *  @value yellow-light 黄色(淡色)
+	 *  @value green 绿色(中性色)
+	 *  @value green-deep 绿色(深色)
+	 *  @value green-shallow 绿色(浅色)
+	 *  @value green-light 绿色(淡色)
+	 *  @value cyan 青色(中性色)
+	 *  @value cyan-deep 青色(深色)
+	 *  @value cyan-shallow 青色(浅色)
+	 *  @value cyan-light 青色(淡色)
+	 *  @value blue 蓝色(中性色)
+	 *  @value blue-deep 蓝色(深色)
+	 *  @value blue-shallow 蓝色(浅色)
+	 *  @value blue-light 蓝色(淡色)
+	 *  @value purple 紫色(中性色)
+	 *  @value purple-deep 紫色(深色)
+	 *  @value purple-shallow 紫色(浅色)
+	 *  @value purple-light 紫色(淡色)
+	 * @property {String} color-custom 自定义图标颜色，示例 #000000
+	 * @property {Boolean} bold 加粗图标
+	 * @property {Boolean} stop 事件冒泡
+	 * @property {Arrar} margin 外边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {Arrar} padding 内边距(rpx)，数组形式，写法[1]/[1,2]/[1,2,3]/[1,2,3,4]
+	 * @property {Object} style-custom 自定义组件样式，同 css 样式，注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+	 * @event {Function()} click 点击事件
+	 */
+	export default {
+		name: "dIcon",
+		props: {
+			show: {
+				type: Boolean, //控制显示或者隐藏
+				default: true
+			},
+			icon: {
+				type: String,
+				default: 'iconactivity' //图标名称
+			},
+			size: {
+				type: [String, Number],
+				default: 30 //图标尺寸
+			},
+			color: {
+				type: String, //图标颜色
+				default: 'main'
+			},
+			colorCustom: {
+				type: String, //自定义图标颜色
+				default: ''
+			},
+			bold: {
+				type: Boolean, //加粗图标
+				default: false
+			},
+			stop: {
+				type: Boolean, //事件冒泡
+				default: false
+			},
+			/*
+			 当数组[1]中只有1位时，为全部(上、右、下、左)边距。
+			 当数组[1,2]为2位时，数组第一位为上下边距，第二位为左右边距，
+			 当数组[1,2,3]为3位时，第一位为上边距，第二位为左右边距，第三位为下边距
+			 当数组[1,2,3,4]为4位时，第一位为上边距，第二位为右边距，第三位为下边距，第四位为左边距
+			 */
+			margin: {
+				type: Array, //外边距
+				default: function() {
+					return []
+				}
+			},
+			/*
+			 当数组[1]中只有1位时，为全部(上、右、下、左)边距。
+			 当数组[1,2]为2位时，数组第一位为上下边距，第二位为左右边距，
+			 当数组[1,2,3]为3位时，第一位为上边距，第二位为左右边距，第三位为下边距
+			 当数组[1,2,3,4]为4位时，第一位为上边距，第二位为右边距，第三位为下边距，第四位为左边距
+			 */
+			padding: {
+				type: Array, //内边距
+				default: function() {
+					return []
+				}
+			},
+			styleCustom: {
+				type: Object, //组件自定义样式，同 css 样式。注意带’-‘连接符的属性需要使用小驼峰写法如：`backgroundColor:red`
+				default: function() {
+					return {}
+				}
+			}
+		},
+		data() {
+			return {
+				iconfont: [
+					//2020-09-01
+					{
+						unicode: "\ue637",
+						icon: "iconz"
+					},
+					{
+						unicode: "\ue6a1",
+						icon: "iconyouhuiquan"
+					},
+					{
+						unicode: "\ue623",
+						icon: "iconquanxianguanli"
+					},
+					{
+						unicode: "\ue613",
+						icon: "iconwodedizhi"
+					},
+					{
+						unicode: "\ue64d",
+						icon: "iconjiarugouwucheicon"
+					},
+					{
+						unicode: "\ue636",
+						icon: "iconwebzanwujilu"
+					},
+					{
+						unicode: "\ue76b",
+						icon: "iconnosignal"
+					},
+					{
+						unicode: "\ue60a",
+						icon: "iconzanwuxinxi"
+					},
+					{
+						unicode: "\ue60b",
+						icon: "iconzanwushuju"
+					},
+					{
+						unicode: "\ue6a7",
+						icon: "iconzanwuxiaoxi"
+					},
+					{
+						unicode: "\ue611",
+						icon: "iconmeiyoushoucang"
+					},
+					{
+						unicode: "\ue612",
+						icon: "iconmeiyoupinglun"
+					},
+					{
+						unicode: "\ue70c",
+						icon: "icondeleteback"
+					},
+					{
+						unicode: "\uef3e",
+						icon: "icondeletebackfill"
+					}, {
+						unicode: "\ue622",
+						icon: "iconbianji"
+					},
+					{
+						unicode: "\ue61f",
+						icon: "iconchaxun"
+					},
+					{
+						unicode: "\ue61a",
+						icon: "iconfabu"
+					},
+					{
+						unicode: "\ue61d",
+						icon: "iconfasong"
+					},
+					{
+						unicode: "\ue61c",
+						icon: "iconshanchu"
+					}, {
+						unicode: "\ue61b",
+						icon: "icontianjia"
+					},
+					{
+						unicode: "\ue61e",
+						icon: "iconxinjian"
+					},
+					{
+						unicode: "\ue620",
+						icon: "iconxiugai"
+					}, {
+						unicode: "\ue60e",
+						icon: "iconroundremovefill"
+					},
+					{
+						unicode: "\ue6c1",
+						icon: "iconroundremove"
+					},
+					{
+						unicode: "\ue610",
+						icon: "icontaobao"
+					},
+					{
+						unicode: "\ue660",
+						icon: "iconweixin"
+					},
+					{
+						unicode: "\ue63b",
+						icon: "iconzhifubao"
+					},
+					{
+						unicode: "\ue6c5",
+						icon: "iconactivity"
+					},
+					{
+						unicode: "\ue775",
+						icon: "iconactivityfill"
+					},
+					{
+						unicode: "\ue767",
+						icon: "iconadd"
+					},
+					{
+						unicode: "\ue6bd",
+						icon: "iconaddressbook"
+					},
+					{
+						unicode: "\ue734",
+						icon: "iconalbum"
+					},
+					{
+						unicode: "\ue755",
+						icon: "iconall"
+					},
+					{
+						unicode: "\ue644",
+						icon: "iconappreciate"
+					},
+					{
+						unicode: "\ue6e3",
+						icon: "iconappreciatefill"
+					},
+					{
+						unicode: "\ue729",
+						icon: "iconapps"
+					},
+					{
+						unicode: "\ue84b",
+						icon: "iconarrow_left_fill"
+					},
+					{
+						unicode: "\ue84c",
+						icon: "iconarrow_up_fill"
+					},
+					{
+						unicode: "\ue7ca",
+						icon: "iconask"
+					},
+					{
+						unicode: "\ue7c9",
+						icon: "iconaskfill"
+					},
+					{
+						unicode: "\ue853",
+						icon: "iconat"
+					},
+					{
+						unicode: "\ue73d",
+						icon: "iconattention"
+					},
+					{
+						unicode: "\ue7b5",
+						icon: "iconattentionfavor"
+					},
+					{
+						unicode: "\ue7b4",
+						icon: "iconattentionfavorfill"
+					},
+					{
+						unicode: "\ue73c",
+						icon: "iconattentionfill"
+					},
+					{
+						unicode: "\ue7b2",
+						icon: "iconattentionforbid"
+					},
+					{
+						unicode: "\ue7b3",
+						icon: "iconattentionforbidfill"
+					},
+					{
+						unicode: "\ue84e",
+						icon: "iconauction"
+					},
+					{
+						unicode: "\ue711",
+						icon: "iconbaby"
+					},
+					{
+						unicode: "\ue710",
+						icon: "iconbabyfill"
+					},
+					{
+						unicode: "\ue679",
+						icon: "iconback"
+					},
+					{
+						unicode: "\ue80c",
+						icon: "iconback_android"
+					},
+					{
+						unicode: "\ue756",
+						icon: "iconbackdelete"
+					},
+					{
+						unicode: "\ue74d",
+						icon: "iconbackwardfill"
+					},
+					{
+						unicode: "\ue723",
+						icon: "iconbad"
+					},
+					{
+						unicode: "\ue6fb",
+						icon: "iconbarcode"
+					},
+					{
+						unicode: "\ue6c7",
+						icon: "iconbig"
+					},
+					{
+						unicode: "\ue713",
+						icon: "iconbrand"
+					},
+					{
+						unicode: "\ue712",
+						icon: "iconbrandfill"
+					},
+					{
+						unicode: "\ue852",
+						icon: "iconbroadcast_fill"
+					},
+					{
+						unicode: "\ue74a",
+						icon: "iconcalendar"
+					},
+					{
+						unicode: "\ue665",
+						icon: "iconcamera"
+					},
+					{
+						unicode: "\ue724",
+						icon: "iconcameraadd"
+					},
+					{
+						unicode: "\ue727",
+						icon: "iconcameraaddfill"
+					},
+					{
+						unicode: "\ue664",
+						icon: "iconcamerafill"
+					},
+					{
+						unicode: "\ue6f9",
+						icon: "iconcamerarotate"
+					},
+					{
+						unicode: "\ue854",
+						icon: "iconcard_fill"
+					},
+					{
+						unicode: "\ue7aa",
+						icon: "iconcardboard"
+					},
+					{
+						unicode: "\ue7a9",
+						icon: "iconcardboardfill"
+					},
+					{
+						unicode: "\ue7af",
+						icon: "iconcardboardforbid"
+					},
+					{
+						unicode: "\ue6af",
+						icon: "iconcart"
+					},
+					{
+						unicode: "\ue6b9",
+						icon: "iconcartfill"
+					},
+					{
+						unicode: "\ue67c",
+						icon: "iconcascades"
+					},
+					{
+						unicode: "\ue829",
+						icon: "iconchange"
+					},
+					{
+						unicode: "\ue645",
+						icon: "iconcheck"
+					},
+					{
+						unicode: "\ue715",
+						icon: "iconchoiceness"
+					},
+					{
+						unicode: "\ue714",
+						icon: "iconchoicenessfill"
+					},
+					{
+						unicode: "\ue7b1",
+						icon: "iconcircle"
+					},
+					{
+						unicode: "\ue7b0",
+						icon: "iconcirclefill"
+					},
+					{
+						unicode: "\ue646",
+						icon: "iconclose"
+					},
+					{
+						unicode: "\ue717",
+						icon: "iconclothes"
+					},
+					{
+						unicode: "\ue716",
+						icon: "iconclothesfill"
+					},
+					{
+						unicode: "\ue816",
+						icon: "iconcoffee"
+					},
+					{
+						unicode: "\ue7ac",
+						icon: "iconcoin"
+					},
+					{
+						unicode: "\ue73f",
+						icon: "iconcommand"
+					},
+					{
+						unicode: "\ue73e",
+						icon: "iconcommandfill"
+					},
+					{
+						unicode: "\ue667",
+						icon: "iconcomment"
+					},
+					{
+						unicode: "\ue666",
+						icon: "iconcommentfill"
+					},
+					{
+						unicode: "\ue741",
+						icon: "iconcommunity"
+					},
+					{
+						unicode: "\ue740",
+						icon: "iconcommunityfill"
+					},
+					{
+						unicode: "\ue706",
+						icon: "iconcopy"
+					},
+					{
+						unicode: "\ue708",
+						icon: "iconcountdown"
+					},
+					{
+						unicode: "\ue707",
+						icon: "iconcountdownfill"
+					},
+					{
+						unicode: "\ue719",
+						icon: "iconcreative"
+					},
+					{
+						unicode: "\ue718",
+						icon: "iconcreativefill"
+					},
+					{
+						unicode: "\ue777",
+						icon: "iconcrown"
+					},
+					{
+						unicode: "\ue776",
+						icon: "iconcrownfill"
+					},
+					{
+						unicode: "\ue74b",
+						icon: "iconcut"
+					},
+					{
+						unicode: "\ue6b4",
+						icon: "icondelete"
+					},
+					{
+						unicode: "\ue6a6",
+						icon: "icondeletefill"
+					},
+					{
+						unicode: "\ue671",
+						icon: "icondeliver"
+					},
+					{
+						unicode: "\ue81f",
+						icon: "icondeliverfill"
+					},
+					{
+						unicode: "\ue67e",
+						icon: "icondiscover"
+					},
+					{
+						unicode: "\ue6ba",
+						icon: "icondiscoverfill"
+					},
+					{
+						unicode: "\ue703",
+						icon: "icondown"
+					},
+					{
+						unicode: "\ue815",
+						icon: "icondress"
+					},
+					{
+						unicode: "\ue649",
+						icon: "iconedit"
+					},
+					{
+						unicode: "\ue64a",
+						icon: "iconemoji"
+					},
+					{
+						unicode: "\ue78d",
+						icon: "iconemojifill"
+					},
+					{
+						unicode: "\ue78e",
+						icon: "iconemojiflashfill"
+					},
+					{
+						unicode: "\ue672",
+						icon: "iconevaluate"
+					},
+					{
+						unicode: "\ue813",
+						icon: "iconevaluatefill"
+					},
+					{
+						unicode: "\ue7cb",
+						icon: "iconexit"
+					},
+					{
+						unicode: "\ue6d2",
+						icon: "iconexplore"
+					},
+					{
+						unicode: "\ue6dd",
+						icon: "iconexplorefill"
+					},
+					{
+						unicode: "\ue811",
+						icon: "iconexpressman"
+					},
+					{
+						unicode: "\ue64c",
+						icon: "iconfavor"
+					},
+					{
+						unicode: "\ue64b",
+						icon: "iconfavorfill"
+					},
+					{
+						unicode: "\ue71a",
+						icon: "iconfemale"
+					},
+					{
+						unicode: "\ue739",
+						icon: "iconfile"
+					},
+					{
+						unicode: "\ue69c",
+						icon: "iconfilter"
+					},
+					{
+						unicode: "\ue78f",
+						icon: "iconflashbuyfill-copy"
+					},
+					{
+						unicode: "\ue6fc",
+						icon: "iconflashlightclose"
+					},
+					{
+						unicode: "\ue6fd",
+						icon: "iconflashlightopen"
+					},
+					{
+						unicode: "\ue725",
+						icon: "iconfocus"
+					},
+					{
+						unicode: "\ue6de",
+						icon: "iconfold"
+					},
+					{
+						unicode: "\ue69d",
+						icon: "iconfootprint"
+					},
+					{
+						unicode: "\ue699",
+						icon: "iconform"
+					},
+					{
+						unicode: "\ue7ab",
+						icon: "iconformfill"
+					},
+					{
+						unicode: "\ue6eb",
+						icon: "iconforward"
+					},
+					{
+						unicode: "\ue6ea",
+						icon: "iconforwardfill"
+					},
+					{
+						unicode: "\ue6cc",
+						icon: "iconfriend"
+					},
+					{
+						unicode: "\ue6ca",
+						icon: "iconfriendadd"
+					},
+					{
+						unicode: "\ue6c9",
+						icon: "iconfriendaddfill"
+					},
+					{
+						unicode: "\ue6cb",
+						icon: "iconfriendfamous"
+					},
+					{
+						unicode: "\ue6f1",
+						icon: "iconfriendfavor"
+					},
+					{
+						unicode: "\ue726",
+						icon: "iconfriendfill"
+					},
+					{
+						unicode: "\ue7bc",
+						icon: "iconfull"
+					},
+					{
+						unicode: "\ue814",
+						icon: "iconfurniture"
+					},
+					{
+						unicode: "\ue6df",
+						icon: "icongame"
+					},
+					{
+						unicode: "\ue809",
+						icon: "iconglobal"
+					},
+					{
+						unicode: "\ue6cd",
+						icon: "icongoods"
+					},
+					{
+						unicode: "\ue794",
+						icon: "icongoodsfavor"
+					},
+					{
+						unicode: "\ue778",
+						icon: "icongoodsfill"
+					},
+					{
+						unicode: "\ue849",
+						icon: "icongoods_hot_fill"
+					},
+					{
+						unicode: "\ue7c0",
+						icon: "icongoodsnew"
+					},
+					{
+						unicode: "\ue7bf",
+						icon: "icongoodsnewfill"
+					},
+					{
+						unicode: "\ue753",
+						icon: "icongroup"
+					},
+					{
+						unicode: "\ue81c",
+						icon: "icongroup_fill"
+					},
+					{
+						unicode: "\ue6b8",
+						icon: "iconhome"
+					},
+					{
+						unicode: "\ue6bb",
+						icon: "iconhomefill"
+					},
+					{
+						unicode: "\ue758",
+						icon: "iconhot"
+					},
+					{
+						unicode: "\ue757",
+						icon: "iconhotfill"
+					},
+					{
+						unicode: "\ue6e5",
+						icon: "iconinfo"
+					},
+					{
+						unicode: "\ue6e4",
+						icon: "iconinfofill"
+					},
+					{
+						unicode: "\ue71b",
+						icon: "iconkeyboard"
+					},
+					{
+						unicode: "\ue6fa",
+						icon: "iconlight"
+					},
+					{
+						unicode: "\ue6f6",
+						icon: "iconlightauto"
+					},
+					{
+						unicode: "\ue6f8",
+						icon: "iconlightfill"
+					},
+					{
+						unicode: "\ue6f7",
+						icon: "iconlightforbid"
+					},
+					{
+						unicode: "\ue669",
+						icon: "iconlike"
+					},
+					{
+						unicode: "\ue668",
+						icon: "iconlikefill"
+					},
+					{
+						unicode: "\ue6bf",
+						icon: "iconlink"
+					},
+					{
+						unicode: "\ue682",
+						icon: "iconlist"
+					},
+					{
+						unicode: "\ue848",
+						icon: "iconliving"
+					},
+					{
+						unicode: "\ue64f",
+						icon: "iconloading"
+					},
+					{
+						unicode: "\ue651",
+						icon: "iconlocation"
+					},
+					{
+						unicode: "\ue650",
+						icon: "iconlocationfill"
+					},
+					{
+						unicode: "\ue819",
+						icon: "iconlocation_light"
+					},
+					{
+						unicode: "\ue6c0",
+						icon: "iconlock"
+					},
+					{
+						unicode: "\ue74c",
+						icon: "iconmagic"
+					},
+					{
+						unicode: "\ue647",
+						icon: "iconmail"
+					},
+					{
+						unicode: "\ue884",
+						icon: "iconmailfill"
+					},
+					{
+						unicode: "\ue71c",
+						icon: "iconmale"
+					},
+					{
+						unicode: "\ue851",
+						icon: "iconmallfill"
+					},
+					{
+						unicode: "\ue850",
+						icon: "iconmall"
+					},
+					{
+						unicode: "\ue731",
+						icon: "iconmark"
+					},
+					{
+						unicode: "\ue730",
+						icon: "iconmarkfill"
+					},
+					{
+						unicode: "\ue7c2",
+						icon: "iconmedal"
+					},
+					{
+						unicode: "\ue7c1",
+						icon: "iconmedalfill"
+					},
+					{
+						unicode: "\ue6bc",
+						icon: "iconmessage"
+					},
+					{
+						unicode: "\ue779",
+						icon: "iconmessagefill"
+					},
+					{
+						unicode: "\ue704",
+						icon: "iconmobile"
+					},
+					{
+						unicode: "\ue705",
+						icon: "iconmobilefill"
+					},
+					{
+						unicode: "\ue6e9",
+						icon: "iconmobiletao"
+					},
+					{
+						unicode: "\ue7d1",
+						icon: "iconmoneybag"
+					},
+					{
+						unicode: "\ue7ce",
+						icon: "iconmoneybagfill"
+					},
+					{
+						unicode: "\ue684",
+						icon: "iconmore"
+					},
+					{
+						unicode: "\ue6a5",
+						icon: "iconmoreandroid"
+					},
+					{
+						unicode: "\ue768",
+						icon: "iconmove"
+					},
+					{
+						unicode: "\ue795",
+						icon: "iconmusicfill"
+					},
+					{
+						unicode: "\ue796",
+						icon: "iconmusicforbidfill"
+					},
+					{
+						unicode: "\ue78b",
+						icon: "iconmy"
+					},
+					{
+						unicode: "\ue78c",
+						icon: "iconmyfill"
+					},
+					{
+						unicode: "\ue71e",
+						icon: "iconnew"
+					},
+					{
+						unicode: "\ue71d",
+						icon: "iconnewfill"
+					},
+					{
+						unicode: "\ue7c6",
+						icon: "iconnews"
+					},
+					{
+						unicode: "\ue7c3",
+						icon: "iconnewsfill"
+					},
+					{
+						unicode: "\ue7c5",
+						icon: "iconnewshot"
+					},
+					{
+						unicode: "\ue7c4",
+						icon: "iconnewshotfill"
+					},
+					{
+						unicode: "\ue70a",
+						icon: "iconnotice"
+					},
+					{
+						unicode: "\ue709",
+						icon: "iconnoticefill"
+					},
+					{
+						unicode: "\ue820",
+						icon: "iconnotice_forbid_fill"
+					},
+					{
+						unicode: "\ue66b",
+						icon: "iconnotification"
+					},
+					{
+						unicode: "\ue66a",
+						icon: "iconnotificationfill"
+					},
+					{
+						unicode: "\ue6db",
+						icon: "iconnotificationforbidfill"
+					},
+					{
+						unicode: "\ue66c",
+						icon: "iconorder"
+					},
+					{
+						unicode: "\ue72b",
+						icon: "iconpaint"
+					},
+					{
+						unicode: "\ue72a",
+						icon: "iconpaintfill"
+					},
+					{
+						unicode: "\ue673",
+						icon: "iconpay"
+					},
+					{
+						unicode: "\ue736",
+						icon: "iconpeople"
+					},
+					{
+						unicode: "\ue735",
+						icon: "iconpeoplefill"
+					},
+					{
+						unicode: "\ue7be",
+						icon: "iconpeoplelist"
+					},
+					{
+						unicode: "\ue652",
+						icon: "iconphone"
+					},
+					{
+						unicode: "\ue69b",
+						icon: "iconpic"
+					},
+					{
+						unicode: "\ue72c",
+						icon: "iconpicfill"
+					},
+					{
+						unicode: "\ue823",
+						icon: "iconpick"
+					},
+					{
+						unicode: "\ue74f",
+						icon: "iconplayfill"
+					},
+					{
+						unicode: "\ue81d",
+						icon: "iconplayforwardfill"
+					},
+					{
+						unicode: "\ue759",
+						icon: "iconpost"
+					},
+					{
+						unicode: "\ue6d3",
+						icon: "iconpresent"
+					},
+					{
+						unicode: "\ue732",
+						icon: "iconpresentfill"
+					},
+					{
+						unicode: "\ue6b7",
+						icon: "iconprofile"
+					},
+					{
+						unicode: "\ue77a",
+						icon: "iconprofilefill"
+					},
+					{
+						unicode: "\ue79f",
+						icon: "iconpulldown1"
+					},
+					{
+						unicode: "\ue69f",
+						icon: "iconpulldown"
+					},
+					{
+						unicode: "\ue71f",
+						icon: "iconpullleft"
+					},
+					{
+						unicode: "\ue720",
+						icon: "iconpullright"
+					},
+					{
+						unicode: "\ue6a0",
+						icon: "iconpullup"
+					},
+					{
+						unicode: "\ue764",
+						icon: "iconpunch"
+					},
+					{
+						unicode: "\ue70b",
+						icon: "iconqiang"
+					},
+					{
+						unicode: "\ue66f",
+						icon: "iconqq"
+					},
+					{
+						unicode: "\ue6b0",
+						icon: "iconqrcode"
+					},
+					{
+						unicode: "\ue691",
+						icon: "iconquestion"
+					},
+					{
+						unicode: "\ue690",
+						icon: "iconquestionfill"
+					},
+					{
+						unicode: "\ue75b",
+						icon: "iconradiobox"
+					},
+					{
+						unicode: "\ue763",
+						icon: "iconradioboxfill"
+					},
+					{
+						unicode: "\ue722",
+						icon: "iconrank"
+					},
+					{
+						unicode: "\ue721",
+						icon: "iconrankfill"
+					},
+					{
+						unicode: "\ue742",
+						icon: "iconread"
+					},
+					{
+						unicode: "\ue6ed",
+						icon: "iconrecharge"
+					},
+					{
+						unicode: "\ue6ec",
+						icon: "iconrechargefill"
+					},
+					{
+						unicode: "\ue7a6",
+						icon: "iconrecord"
+					},
+					{
+						unicode: "\ue7a4",
+						icon: "iconrecordfill"
+					},
+					{
+						unicode: "\ue6e0",
+						icon: "iconredpacket"
+					},
+					{
+						unicode: "\ue7d3",
+						icon: "iconredpacket_fill"
+					},
+					{
+						unicode: "\ue6a4",
+						icon: "iconrefresh"
+					},
+					{
+						unicode: "\ue72d",
+						icon: "iconrefresharrow"
+					},
+					{
+						unicode: "\ue6ac",
+						icon: "iconrefund"
+					},
+					{
+						unicode: "\ue6b2",
+						icon: "iconremind"
+					},
+					{
+						unicode: "\ue738",
+						icon: "iconrepair"
+					},
+					{
+						unicode: "\ue73a",
+						icon: "iconrepairfill"
+					},
+					{
+						unicode: "\ue733",
+						icon: "iconrepeal"
+					},
+					{
+						unicode: "\ue84f",
+						icon: "iconreturn"
+					},
+					{
+						unicode: "\ue6a3",
+						icon: "iconright"
+					},
+					{
+						unicode: "\ue6d7",
+						icon: "iconround"
+					},
+					{
+						unicode: "\ue6d9",
+						icon: "iconroundadd"
+					},
+					{
+						unicode: "\ue6d8",
+						icon: "iconroundaddfill"
+					},
+					{
+						unicode: "\ue657",
+						icon: "iconroundcheck"
+					},
+					{
+						unicode: "\ue656",
+						icon: "iconroundcheckfill"
+					},
+					{
+						unicode: "\ue659",
+						icon: "iconroundclose"
+					},
+					{
+						unicode: "\ue658",
+						icon: "iconroundclosefill"
+					},
+					{
+						unicode: "\ue82d",
+						icon: "iconroundcrownfill"
+					},
+					{
+						unicode: "\ue75c",
+						icon: "iconrounddown"
+					},
+					{
+						unicode: "\ue830",
+						icon: "iconroundfavorfill"
+					},
+					{
+						unicode: "\ue82c",
+						icon: "iconroundfriendfill"
+					},
+					{
+						unicode: "\ue799",
+						icon: "iconroundleftfill"
+					},
+					{
+						unicode: "\ue82f",
+						icon: "iconroundlightfill"
+					},
+					{
+						unicode: "\ue834",
+						icon: "iconroundlikefill"
+					},
+					{
+						unicode: "\ue82e",
+						icon: "iconroundlinkfill"
+					},
+					{
+						unicode: "\ue832",
+						icon: "iconroundlocationfill"
+					},
+					{
+						unicode: "\ue831",
+						icon: "iconroundmenufill"
+					},
+					{
+						unicode: "\ue836",
+						icon: "iconroundpay"
+					},
+					{
+						unicode: "\ue833",
+						icon: "iconroundpayfill"
+					},
+					{
+						unicode: "\ue835",
+						icon: "iconroundpeoplefill"
+					},
+					{
+						unicode: "\ue837",
+						icon: "iconroundrankfill"
+					},
+					{
+						unicode: "\ue83a",
+						icon: "iconroundrecordfill"
+					},
+					{
+						unicode: "\ue83c",
+						icon: "iconroundredpacket"
+					},
+					{
+						unicode: "\ue838",
+						icon: "iconroundredpacketfill"
+					},
+					{
+						unicode: "\ue65b",
+						icon: "iconroundright"
+					},
+					{
+						unicode: "\ue65a",
+						icon: "iconroundrightfill"
+					},
+					{
+						unicode: "\ue845",
+						icon: "iconroundshopfill"
+					},
+					{
+						unicode: "\ue839",
+						icon: "iconroundskinfill"
+					},
+					{
+						unicode: "\ue83d",
+						icon: "iconroundtextfill"
+					},
+					{
+						unicode: "\ue83e",
+						icon: "iconroundticket"
+					},
+					{
+						unicode: "\ue83b",
+						icon: "iconroundticketfill"
+					},
+					{
+						unicode: "\ue842",
+						icon: "iconroundtransfer"
+					},
+					{
+						unicode: "\ue83f",
+						icon: "iconroundtransferfill"
+					},
+					{
+						unicode: "\ue769",
+						icon: "iconsafe"
+					},
+					{
+						unicode: "\ue66e",
+						icon: "iconsame"
+					},
+					{
+						unicode: "\ue66d",
+						icon: "iconsamefill"
+					},
+					{
+						unicode: "\ue689",
+						icon: "iconscan"
+					},
+					{
+						unicode: "\ue65c",
+						icon: "iconsearch"
+					},
+					{
+						unicode: "\ue6fe",
+						icon: "iconsearchlist"
+					},
+					{
+						unicode: "\ue6ce",
+						icon: "iconselection"
+					},
+					{
+						unicode: "\ue6e1",
+						icon: "iconselectionfill"
+					},
+					{
+						unicode: "\ue675",
+						icon: "iconsend"
+					},
+					{
+						unicode: "\ue6ff",
+						icon: "iconservice"
+					},
+					{
+						unicode: "\ue737",
+						icon: "iconservicefill"
+					},
+					{
+						unicode: "\ue68a",
+						icon: "iconsettings"
+					},
+					{
+						unicode: "\ue765",
+						icon: "iconshake"
+					},
+					{
+						unicode: "\ue6f3",
+						icon: "iconshare"
+					},
+					{
+						unicode: "\ue676",
+						icon: "iconshop"
+					},
+					{
+						unicode: "\ue697",
+						icon: "iconshopfill"
+					},
+					{
+						unicode: "\ue6e2",
+						icon: "iconsimilar"
+					},
+					{
+						unicode: "\ue7cd",
+						icon: "iconskin"
+					},
+					{
+						unicode: "\ue7cc",
+						icon: "iconskinfill"
+					},
+					{
+						unicode: "\ue700",
+						icon: "iconsort"
+					},
+					{
+						unicode: "\ue77b",
+						icon: "iconsound"
+					},
+					{
+						unicode: "\ue77d",
+						icon: "iconsponsor"
+					},
+					{
+						unicode: "\ue77c",
+						icon: "iconsponsorfill"
+					},
+					{
+						unicode: "\ue817",
+						icon: "iconsports"
+					},
+					{
+						unicode: "\ue6d5",
+						icon: "iconsquare"
+					},
+					{
+						unicode: "\ue6d6",
+						icon: "iconsquarecheck"
+					},
+					{
+						unicode: "\ue6d4",
+						icon: "iconsquarecheckfill"
+					},
+					{
+						unicode: "\ue750",
+						icon: "iconstop"
+					},
+					{
+						unicode: "\ue7d4",
+						icon: "iconsubscription"
+					},
+					{
+						unicode: "\ue752",
+						icon: "icontag"
+					},
+					{
+						unicode: "\ue751",
+						icon: "icontagfill"
+					},
+					{
+						unicode: "\ue73b",
+						icon: "icontaoxiaopu"
+					},
+					{
+						unicode: "\ue65d",
+						icon: "icontaxi"
+					},
+					{
+						unicode: "\ue791",
+						icon: "icontext"
+					},
+					{
+						unicode: "\ue677",
+						icon: "iconticket"
+					},
+					{
+						unicode: "\ue82b",
+						icon: "iconticketfill"
+					},
+					{
+						unicode: "\ue84a",
+						icon: "iconticketmoneyfill"
+					},
+					{
+						unicode: "\ue65f",
+						icon: "icontime"
+					},
+					{
+						unicode: "\ue65e",
+						icon: "icontimefill"
+					},
+					{
+						unicode: "\ue6cf",
+						icon: "icontmall"
+					},
+					{
+						unicode: "\ue69e",
+						icon: "icontop"
+					},
+					{
+						unicode: "\ue79b",
+						icon: "icontriangledownfill"
+					},
+					{
+						unicode: "\ue79c",
+						icon: "icontriangleupfill"
+					},
+					{
+						unicode: "\ue661",
+						icon: "iconunfold"
+					},
+					{
+						unicode: "\ue6c2",
+						icon: "iconunlock"
+					},
+					{
+						unicode: "\ue77e",
+						icon: "iconupblock"
+					},
+					{
+						unicode: "\ue75d",
+						icon: "iconupload"
+					},
+					{
+						unicode: "\ue70f",
+						icon: "iconupstage"
+					},
+					{
+						unicode: "\ue70e",
+						icon: "iconupstagefill"
+					},
+					{
+						unicode: "\ue7d0",
+						icon: "iconusefull"
+					},
+					{
+						unicode: "\ue7cf",
+						icon: "iconusefullfill"
+					},
+					{
+						unicode: "\ue7c8",
+						icon: "iconvideo"
+					},
+					{
+						unicode: "\ue7c7",
+						icon: "iconvideofill"
+					},
+					{
+						unicode: "\ue6c3",
+						icon: "iconvip"
+					},
+					{
+						unicode: "\ue843",
+						icon: "iconvipcode"
+					},
+					{
+						unicode: "\ue6ee",
+						icon: "iconvipcard"
+					},
+					{
+						unicode: "\ue6ef",
+						icon: "iconvoice"
+					},
+					{
+						unicode: "\ue6f0",
+						icon: "iconvoicefill"
+					},
+					{
+						unicode: "\ue678",
+						icon: "iconwang"
+					},
+					{
+						unicode: "\ue69a",
+						icon: "iconwangfill"
+					},
+					{
+						unicode: "\ue663",
+						icon: "iconwarn"
+					},
+					{
+						unicode: "\ue662",
+						icon: "iconwarnfill"
+					},
+					{
+						unicode: "\ue6f5",
+						icon: "iconwe"
+					},
+					{
+						unicode: "\ue77f",
+						icon: "iconweblock"
+					},
+					{
+						unicode: "\ue6f4",
+						icon: "iconwefill"
+					},
+					{
+						unicode: "\ue780",
+						icon: "iconweunblock"
+					},
+					{
+						unicode: "\ue6c4",
+						icon: "iconweibo"
+					},
+					{
+						unicode: "\ue6f2",
+						icon: "iconwifi"
+					},
+					{
+						unicode: "\ue761",
+						icon: "iconwrite"
+					},
+					{
+						unicode: "\ue760",
+						icon: "iconwritefill"
+					}
+				]
+			}
+		},
+		computed: {
+			style_icon() {
+				let styleList = { ...this.styleCustom,
+					fontSize: this.size + 'rpx'
+				}
+				/* 自定义图标颜色 */
+				if (this.colorCustom != "") {
+					let colorCustom_temp = {
+						'color': this.colorCustom
+					};
+					styleList = Object.assign(styleList, colorCustom_temp);
+				};
+				/* 外边距 */
+				switch (this.margin.length) {
+					case 0:
+						break;
+					case 1:
+						let margin_one = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginBottom': this.margin[0] + 'rpx',
+							'marginLeft': this.margin[0] + 'rpx',
+							'marginRight': this.margin[0] + 'rpx'
+						}
+						styleList = Object.assign(styleList, margin_one);
+						break;
+					case 2:
+						let margin_two = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginBottom': this.margin[0] + 'rpx',
+							'marginLeft': this.margin[1] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx'
+						}
+						styleList = Object.assign(styleList, margin_two);
+						break;
+					case 3:
+						let margin_three = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx',
+							'marginBottom': this.margin[2] + 'rpx',
+							'marginLeft': this.margin[1] + 'rpx'
+						}
+						styleList = Object.assign(styleList, margin_three);
+						break;
+					case 4:
+						let margin_four = {
+							'marginTop': this.margin[0] + 'rpx',
+							'marginRight': this.margin[1] + 'rpx',
+							'marginBottom': this.margin[2] + 'rpx',
+							'marginLeft': this.margin[3] + 'rpx',
+						}
+						styleList = Object.assign(styleList, margin_four);
+						break;
+					default:
+						console.error("margin参数不正确,请参考dnvue官方文档。示例示例[1]/[1,2]/[1,2,3]/[1,2,3,4]")
+						break;
+				}
+				/* 外边距 */
+				switch (this.padding.length) {
+					case 0:
+						break;
+					case 1:
+						let padding_one = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingBottom': this.padding[0] + 'rpx',
+							'paddingLeft': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[0] + 'rpx'
+						}
+						styleList = Object.assign(styleList, padding_one);
+						break;
+					case 2:
+						let padding_two = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingBottom': this.padding[0] + 'rpx',
+							'paddingLeft': this.padding[1] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx'
+						}
+						styleList = Object.assign(styleList, padding_two);
+						break;
+					case 3:
+						let padding_three = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx',
+							'paddingBottom': this.padding[2] + 'rpx',
+							'paddingLeft': this.padding[1] + 'rpx'
+						}
+						styleList = Object.assign(styleList, padding_three);
+						break;
+					case 4:
+						let padding_four = {
+							'paddingTop': this.padding[0] + 'rpx',
+							'paddingRight': this.padding[1] + 'rpx',
+							'paddingBottom': this.padding[2] + 'rpx',
+							'paddingLeft': this.padding[3] + 'rpx'
+						}
+						styleList = Object.assign(styleList, padding_four);
+						break;
+					default:
+						console.error("padding参数不正确,请参考dnvue官方文档。示例[1]/[1,2]/[1,2,3]/[1,2,3,4]");
+						break;
+				}
+				return styleList;
+			}
+		},
+		methods: {
+			/* 点击事件 */
+			click(event) {
+				this.$emit("click");
+				//阻止事件冒泡
+				if (this.stop) {
+					event.stopPropagation();
+				}
+			}
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

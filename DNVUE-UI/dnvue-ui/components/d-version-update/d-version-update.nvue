@@ -1,0 +1,134 @@
+<template>
+	<d-popup :show="true" :mask-close="false" :width="width">
+		<d-column>
+			<!-- 图片 -->
+			<d-image :radius="[8,0]" :width="width" height="300" src="/static/image/sys/update.png" />
+			<!-- 主体 -->
+			<d-column :padding="[0,36,0]" bg="white" :radius="[0,8]">
+				<!-- 标题 -->
+				<d-text :show="!installationState" align="center" :margin="[24,0]" :text="updateState?'版本更新':'正在升级...'" size="42"
+				 bold />
+				<d-text :show="installationState" align="center" :margin="[24,0]" text="升级完成啦!" size="42" bold />
+				<!-- 内容 -->
+				<d-column :style-custom="{minHeight:'66px'}" mode="middle">
+					<d-rich-text :html="content"></d-rich-text>
+				</d-column>
+				<!-- 升级按钮 -->
+				<d-column mode="center" :margin="[24,0]">
+					<!-- 进度条 -->
+					<progress v-if="!updateState && !installationState" :style="{width: `${width-120}rpx`}" color="#519BE4" :percent="downloadTaskInfo.progress"
+					 show-info stroke-width="6" />
+					<!-- 激励更新-->
+					<d-button :show="updateState" text="立即更新" @click="updateNow" :radius="[0]" :style-custom="{backgroundImage:'linear-gradient(to left, #3A63CC, #519BE4)'}"></d-button>
+					<!-- 重启APP -->
+					<d-button :show="installationState" text="升级完成,立即重启APP" @click="restartApp" :radius="[0]" :style-custom="{backgroundImage:'linear-gradient(to left, #3A63CC, #519BE4)'}"></d-button>
+				</d-column>
+			</d-column>
+		</d-column>
+		<!-- 关闭更新按钮 -->
+		<d-column mode="center" :show="updateState && !forcedUpdate">
+			<d-row height="66" width="4" bg="gray-light"></d-row>
+			<d-icon size="66" icon="iconroundclosefill" color="white" @click="close" />
+		</d-column>
+	</d-popup>
+</template>
+
+<script>
+	export default {
+		name: "dVersionUpdate",
+		data() {
+			return {
+				width: 600, //弹出框宽度
+				updateState: true, //更新状态
+				installationState: false, //更新完成状态
+				content: '', //更新内容
+				updateAddress: '', //更新地址
+				downloadTaskInfo: '', //下载进度
+				backPress: true, //是否返回状态
+				forcedUpdate: false //强制更新
+			};
+		},
+		onShow() {
+			//检查更新
+			this.checkUpdate();
+		},
+		methods: {
+			//检查更新
+			checkUpdate() {
+				let version = plus.runtime.version;
+				version = version.replace(/\./g, '');
+				let keyData = {
+					_api_key: "81039dec821b8e74a89b44fd38ad3524"
+				};
+				let appKey = "";
+				if (plus.os.name == 'Android') {
+					appKey = "86c4fcd2db54fedcdcbfcef12100b2d6"; //安卓检查更新appKey
+				} else {
+					appKey = "9a9d61ed10da0e72da27ac3ca8c8294c"; //苹果检查更新appKey
+				};
+				keyData.appKey = appKey;
+				uni.request({
+					url: "https://www.pgyer.com/apiv2/app/check",
+					data: keyData,
+					success: (res) => {
+						//更新内容
+						this.content = res.data.data.buildUpdateDescription;
+						//获取更新地址
+						this.updateAddress = res.data.data.downloadURL;
+						//是否强制更新
+						//this.forcedUpdate = res.data.data.needForceUpdate;
+					}
+				});
+			},
+			//立即更新
+			updateNow() {
+				let me = this;
+				me.updateState = false;
+				const downloadTask = uni.downloadFile({
+					url: me.updateAddress, //下载地址，请根据实际更新地址调整
+					success: (res) => {
+						if (res.statusCode === 200) {
+							// 安装APP
+							me.installation(res.tempFilePath);
+						}
+					}
+				});
+				downloadTask.onProgressUpdate((res) => {
+					//console.log('下载进度' + res.progress); 
+					this.downloadTaskInfo = res;
+				});
+			},
+			//安装app
+			installation(tempFilePath) {
+				let me = this;
+				plus.runtime.install(tempFilePath, {
+					force: true
+				}, function() {
+					console.log("升级")
+					//升级完成状态
+					me.installationState = true;
+				}, function(e) {
+					//错误信息
+					plus.nativeUI.toast("升级失败！错误信息[" + e.code + "]：" + e.message);
+				});
+			},
+			//重启APP
+			restartApp() {
+				plus.runtime.restart();
+			},
+			//关闭更新
+			close() {
+				this.backPress = false;
+				uni.navigateBack();
+			}
+		},
+		//禁止返回操作
+		onBackPress() {
+			return this.backPress;
+		}
+	}
+</script>
+
+<style lang="scss">
+
+</style>

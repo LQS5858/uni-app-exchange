@@ -38,10 +38,9 @@ request.interceptors.response(res => {
 	const { showError } = config || {}
 	const { data: _data, message, error, success } = data || {}
 	if (success) {
-		return _data
+		return Promise.resolve(_data)
 	}
 	if (showError) {
-
 		uni.showToast({
 			title: error || message,
 			duration: 2000
