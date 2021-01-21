@@ -12,7 +12,6 @@ export default {
   },
   mounted () {
     const { query } = this.$Route || {}
-    console.log('--获取参数--', query);
   },
 }
 </script>

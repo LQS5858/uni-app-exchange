@@ -74,5 +74,16 @@ export default {
       encryptionScheme: 'pkcs1'
     })
     return _key.encrypt(pwd, 'base64', 'utf8')
+  },
+  // 可选链
+
+  //模版中使用可选链
+  optionalChaining (obj, ...rest) {
+    let tmp = obj;
+    rest && rest.forEach(value => {
+      tmp = tmp?.[value]
+    })
+    return tmp || "--";
   }
+
 }

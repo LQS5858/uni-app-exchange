@@ -1,7 +1,7 @@
 // 引入插件
 import request from '@/js_sdk/cooke-request/request/request'
 import Vue from 'vue'
-import { apiUrl } from '@/config/api'
+import { apiUrl } from '@/config/base'
 
 
 // 全局配置
@@ -12,7 +12,6 @@ request.setConfig({
 
 // 设置请求拦截器
 request.interceptors.request(config => {
-	console.log('req--', config);
 	let token = Vue.prototype.$cache.get('token')
 	config.header.Authorization = token
 	// 配置参数和全局配置相同，此优先级最高，会覆盖在其他地方的相同配置参数

@@ -60,7 +60,6 @@ export default {
         this.broadcastData.push(title)
 
       });
-      console.log('--notice--', this.broadcastData);
     },
     setTitle () {
       const [, header, headerPro] = this.headerUrl || []

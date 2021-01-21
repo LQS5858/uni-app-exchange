@@ -1,6 +1,6 @@
 <script>
 
-import { manifestUrl } from '@/config/api'
+import { manifestUrl } from '@/config/base'
 let count = 0
 export default {
   onLaunch: function () {
@@ -23,7 +23,6 @@ export default {
         success: (data) => {
           const { data: _data } = data || {}
           if (!_data) return
-          console.log('--manifest--', _data);
           const { url } = _data || {}
           const { webApiUrl, socketUrl } = url || {}
           this.$http.baseUrl = webApiUrl
@@ -82,6 +81,8 @@ export default {
 </script>
 
 <style lang="less">
+@import 'colorui/main.css';
+@import 'colorui/icon.css';
 @import './assets/styles/global.less';
 
 /* 解决头条小程序组件内引入字体不生效的问题 */ /* #ifdef MP-TOUTIAO */
@@ -91,6 +92,17 @@ export default {
 }
 /* #endif */
 
+.cu-load.loading::before {
+  font-size: 30px;
+  color: #fff;
+}
+.cu-load.loading::before {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 10px;
+  margin: auto;
+}
 page {
   background-color: @pageBgColor;
 }

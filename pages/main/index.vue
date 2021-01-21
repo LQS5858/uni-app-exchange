@@ -1,19 +1,19 @@
 <template>
-  <Root>
+  <root-view>
     <scroll-view :scroll-y="true"
                  class="home-wrap">
       <!-- <image src=""></image> -->
       <swiper class="swiper"
               :indicator-dots="indicatorDots"
               :autoplay="autoplay"
+              indicator-active-color="#ffffff"
               :interval="interval"
               :duration="duration">
         <swiper-item v-for="(item,index) in bannerList"
                      :item-id="String(index)"
                      class="swiper-item flex"
                      :key="index">
-          <image mode="widthFix"
-                 class="swiper-image"
+          <image class="swiper-image"
                  :src="item&&item.imageApp"></image>
         </swiper-item>
 
@@ -24,28 +24,35 @@
                     type="vert"></WybNoticeBar>
       <view class="market-header">
         <view class="column flex">
-          <text class="symbol">{{marketFormat&&marketFormat[0]&&marketFormat[0].symbol}}</text>
-          <text class="price">{{marketFormat&&marketFormat[0]&&marketFormat[0]._price}}</text>
-          <text class="rose">{{marketFormat&&marketFormat[0]&&marketFormat[0].rose}}</text>
+          <text class="symbol">{{$$(marketFormat,'0','symbol')}}</text>
+          <text class="price">{{$$(marketFormat,'0','_price')}}</text>
+          <text class="rose">{{$$(marketFormat,'0','rose')}}</text>
         </view>
         <view class="column flex">
-          <text class="symbol">{{marketFormat&&marketFormat[1]&&marketFormat[1].symbol}}</text>
-          <text class="price">{{marketFormat&&marketFormat[1]&&marketFormat[1]._price}}</text>
-          <text class="rose">{{marketFormat&&marketFormat[1]&&marketFormat[1].rose}}</text>
+          <text class="symbol">{{$$(marketFormat,'1','symbol')}}</text>
+          <text class="price">{{$$(marketFormat,'1','_price')}}</text>
+          <text class="rose">{{$$(marketFormat,'1','rose')}}</text>
         </view>
         <view class="column flex">
-          <text class="symbol">{{marketFormat&&marketFormat[2]&&marketFormat[2].symbol}}</text>
-          <text class="price">{{marketFormat&&marketFormat[2]&&marketFormat[2]._price}}</text>
-          <text class="rose">{{marketFormat&&marketFormat[2]&&marketFormat[2].rose}}</text>
+          <text class="symbol">{{$$(marketFormat,'2','symbol')}}</text>
+          <text class="price">{{$$(marketFormat,'2','_price')}}</text>
+          <text class="rose">{{$$(marketFormat,'2','rose')}}</text>
         </view>
 
       </view>
       <list-network>
         <view class="header-nav-wrap">
           <view class="flex row">
+            <!-- #ifdef H5 -->
+            <view class="flex-column"
+                  v-ripple>
+              <image class="buy"
+                     src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNiAzYy0zLjMwOSAwLTYgMi42OTEtNiA2czIuNjkxIDYgNiA2IDYtMi42OTEgNi02LTIuNjkxLTYtNi02bTAgMTRjLTQuNDExIDAtOC0zLjU4OS04LThzMy41ODktOCA4LTggOCAzLjU4OSA4IDgtMy41ODkgOC04IDgiIGZpbGw9IiNENkRGRkMiLz48cGF0aCBkPSJNMTYuNjE3IDl2Ljc3OGgxLjg1Yy4zNCAwIC42MTUuMjYuNjE1LjU4MyAwIC4zMjItLjI3NS41ODMtLjYxNi41ODNoLTEuODV2Ljk3M2MwIC4zMjItLjI3NS41ODMtLjYxNi41ODMtLjM0IDAtLjYxNi0uMjYxLS42MTYtLjU4M3YtLjk3M2gtMS44NWMtLjM0IDAtLjYxNS0uMjYxLS42MTUtLjU4MyAwLS4zMjIuMjc1LS41ODMuNjE2LS41ODNoMS44NVY5aC0xLjg1Yy0uMzQxIDAtLjYxNi0uMjYyLS42MTYtLjU4NCAwLS4zMjIuMjc1LS41ODMuNjE2LS41ODNoLjk0OWwtMS40MTUtMS4zMzhhLjU2Mi41NjIgMCAwIDEgMC0uODI1LjY0Mi42NDIgMCAwIDEgLjg3IDBMMTYgNy42MmwyLjA2LTEuOTQ5YS42NDIuNjQyIDAgMCAxIC44NyAwIC41Ni41NiAwIDAgMSAwIC44MjVMMTcuNTIgNy44MzNoLjk0N2MuMzQgMCAuNjE2LjI2MS42MTYuNTgzIDAgLjMyMi0uMjc1LjU4NC0uNjE2LjU4NGgtMS44NXoiIGZpbGw9IiMwMDhBRDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0zIDI5aDE0LjcyOWwxMS4xNC02LjQ5OGExLjAxIDEuMDEgMCAwIDAtLjMxNC0uMzM0Ljk4Ni45ODYgMCAwIDAtLjk0LS4wOTFsLTkuMjMgMy44NDZBLjk5OC45OTggMCAwIDEgMTggMjZoLThhMSAxIDAgMSAxIDAtMmg2YTEuMDAxIDEuMDAxIDAgMCAwIDAtMmgtNWMtLjE5NyAwLS4zOTEtLjA1OS0uNTU1LS4xNjdDOS42OCAyMS4zMjMgNy4zODcgMjAgNiAyMGMtMS4wOSAwLTIuMzQ3Ljg4LTMgMS40MzlWMjl6bTE1IDJIMmExIDEgMCAwIDEtMS0xdi05YzAtLjI2NS4xMDUtLjUyLjI5My0uNzA3QzEuNTI3IDIwLjA1OCAzLjY1MyAxOCA2IDE4YzEuOTQ0IDAgNC40NTIgMS40NjkgNS4yOTUgMkgxNmEzLjAwNCAzLjAwNCAwIDAgMSAyLjk1NSAzLjUxOWw3Ljg5MS0zLjI4OGEyLjk5NSAyLjk5NSAwIDAgMSAyLjgxOC4yNzNBMi45OTMgMi45OTMgMCAwIDEgMzEgMjNhMSAxIDAgMCAxLS40OTYuODY0bC0xMiA3QTEuMDAzIDEuMDAzIDAgMCAxIDE4IDMxeiIgZmlsbD0iI0Q2REZGQyIvPjwvZz48L3N2Zz4="></image>
+              <text class="label">快捷</text>
+            </view>
+            <!-- #endif  -->
             <view class="flex-column">
               <image class="buy"
-                     v-ripple
                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNiAzYy0zLjMwOSAwLTYgMi42OTEtNiA2czIuNjkxIDYgNiA2IDYtMi42OTEgNi02LTIuNjkxLTYtNi02bTAgMTRjLTQuNDExIDAtOC0zLjU4OS04LThzMy41ODktOCA4LTggOCAzLjU4OSA4IDgtMy41ODkgOC04IDgiIGZpbGw9IiNENkRGRkMiLz48cGF0aCBkPSJNMTYuNjE3IDl2Ljc3OGgxLjg1Yy4zNCAwIC42MTUuMjYuNjE1LjU4MyAwIC4zMjItLjI3NS41ODMtLjYxNi41ODNoLTEuODV2Ljk3M2MwIC4zMjItLjI3NS41ODMtLjYxNi41ODMtLjM0IDAtLjYxNi0uMjYxLS42MTYtLjU4M3YtLjk3M2gtMS44NWMtLjM0IDAtLjYxNS0uMjYxLS42MTUtLjU4MyAwLS4zMjIuMjc1LS41ODMuNjE2LS41ODNoMS44NVY5aC0xLjg1Yy0uMzQxIDAtLjYxNi0uMjYyLS42MTYtLjU4NCAwLS4zMjIuMjc1LS41ODMuNjE2LS41ODNoLjk0OWwtMS40MTUtMS4zMzhhLjU2Mi41NjIgMCAwIDEgMC0uODI1LjY0Mi42NDIgMCAwIDEgLjg3IDBMMTYgNy42MmwyLjA2LTEuOTQ5YS42NDIuNjQyIDAgMCAxIC44NyAwIC41Ni41NiAwIDAgMSAwIC44MjVMMTcuNTIgNy44MzNoLjk0N2MuMzQgMCAuNjE2LjI2MS42MTYuNTgzIDAgLjMyMi0uMjc1LjU4NC0uNjE2LjU4NGgtMS44NXoiIGZpbGw9IiMwMDhBRDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0zIDI5aDE0LjcyOWwxMS4xNC02LjQ5OGExLjAxIDEuMDEgMCAwIDAtLjMxNC0uMzM0Ljk4Ni45ODYgMCAwIDAtLjk0LS4wOTFsLTkuMjMgMy44NDZBLjk5OC45OTggMCAwIDEgMTggMjZoLThhMSAxIDAgMSAxIDAtMmg2YTEuMDAxIDEuMDAxIDAgMCAwIDAtMmgtNWMtLjE5NyAwLS4zOTEtLjA1OS0uNTU1LS4xNjdDOS42OCAyMS4zMjMgNy4zODcgMjAgNiAyMGMtMS4wOSAwLTIuMzQ3Ljg4LTMgMS40MzlWMjl6bTE1IDJIMmExIDEgMCAwIDEtMS0xdi05YzAtLjI2NS4xMDUtLjUyLjI5My0uNzA3QzEuNTI3IDIwLjA1OCAzLjY1MyAxOCA2IDE4YzEuOTQ0IDAgNC40NTIgMS40NjkgNS4yOTUgMkgxNmEzLjAwNCAzLjAwNCAwIDAgMSAyLjk1NSAzLjUxOWw3Ljg5MS0zLjI4OGEyLjk5NSAyLjk5NSAwIDAgMSAyLjgxOC4yNzNBMi45OTMgMi45OTMgMCAwIDEgMzEgMjNhMSAxIDAgMCAxLS40OTYuODY0bC0xMiA3QTEuMDAzIDEuMDAzIDAgMCAxIDE4IDMxeiIgZmlsbD0iI0Q2REZGQyIvPjwvZz48L3N2Zz4="></image>
               <text class="label">快捷</text>
             </view>
@@ -122,15 +129,14 @@
         </view>
       </list-network>
     </scroll-view>
-  </Root>
+  </root-view>
 </template>
 <script>
 import subMarket from '@/assets/mixins/subMarket'
 import WybNoticeBar from '@/components/wyb-noticeBar/wyb-noticeBar.vue'
 import { mapState } from 'vuex'
-import uniIcons from "@/components/uni-icons/uni-icons.vue"
+import homeApi from '@/config/interface-address/home'
 
-import Root from '@/components/com/root'
 export default {
   name: "home",
   data () {
@@ -139,6 +145,7 @@ export default {
       bannerList: [],
       indicatorDots: true,
       autoplay: true,
+      noticeLoading: false,
       interval: 2000,
       duration: 500,
       // lessVariable: {
@@ -146,7 +153,7 @@ export default {
       // }
     };
   },
-  components: { WybNoticeBar, uniIcons, Root },
+  components: { WybNoticeBar },
   mixins: [subMarket],
   computed: {
     ...mapState({
@@ -175,14 +182,26 @@ export default {
           site: '亚太站'
         }
       }
-      const arr = await this.$http.post('v1/site/getBannerList', params, { showError }).catch(() => {
+      const noticeParams = {
+        data: {
+          languageCode: this.$i18n.locale,
+          size: '亚太站',
+          page: 1,
+          query: {
+            nameTag: 'notice'
+          },
+          size: 10
+        }
+      }
+      const arr = await Promise.allSettled([this.$http.post(homeApi.bannerListApi, params, { showError }), this.$http.post(homeApi.noticeApi, noticeParams, { showError })]).catch(() => {
         const id = setTimeout(() => {
           this.fetchBannerList()
           clearTimeout(id)
         }, 5000);
-      })
-      this.bannerList = arr || []
-      this.initList(arr)
+      });
+      ({ value: this.bannerList } = arr?.[0] || {})
+      const { rows } = arr?.[1]?.value || {}
+      this.initList(rows)
     },
     initList (list) {
       if (!list || this.$_.isEmpty(list)) return
@@ -191,7 +210,6 @@ export default {
         this.broadcastData.push(title)
 
       });
-      console.log('--notice--', this.broadcastData);
     },
     setTitle () {
       const [, header, headerPro] = this.headerUrl || []
@@ -201,7 +219,9 @@ export default {
       });
     }
   },
+  onLoad () {
 
+  },
   onShow () {
     // console.log('--变量--', getComputedStyle(document.documentElement).getPropertyValue('--sell-color'));
   }
@@ -348,8 +368,9 @@ export default {
   }
   .swiper-image {
     // height: 200rpx;
-    height: auto;
-    width: 750rpx;
+    height: 150px;
+    width: 343px;
+    border-radius: 5rpx;
   }
 }
 </style>

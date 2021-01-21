@@ -61,7 +61,6 @@ export default {
   },
   methods: {
     jump () {
-      console.log('路由跳转--');
       // this.$Router.push({ path: '/pages/test/test', query: { plan: 'private' } }) // -> /user/123
       this.$Router.push({ name: 'test', params: { plan: 'private' } }) // -> /user/123
     },
@@ -70,10 +69,8 @@ export default {
       // const [rateObj,tickerObj] = await Promise.all([this.$http.get('/v1/balance/findAllRate'),this.$http.get('/v1/exchange/ticker/findAll')])
       // console.log('--汇率ticker--', rateObj,tickerObj)
       this.$http.get('/v1/balance/findAllRate', {}, { showError: true }).then(data => {
-        console.log('--data--', data);
       })
       this.test = _.compact(['1', '2', '', 0])
-      console.log(_.compact(['1', '2', '', 0]));
     },
 
 
