@@ -1,6 +1,7 @@
 // 引入插件
 import request from '@/js_sdk/cooke-request/request/request'
 import Vue from 'vue'
+import checkNetwork from '@/utils/checkNetwork'
 import { apiUrl } from '@/config/base'
 
 
@@ -32,21 +33,11 @@ request.interceptors.request(config => {
 })
 
 // 设置响应拦截器
-request.interceptors.response(res => {
+request.interceptors.response(async res => {
 	const { data, config } = res || {}
-	const { showError } = config || {}
-	const { data: _data, message, error, success } = data || {}
-	if (success) {
-		return Promise.resolve(_data)
-	}
-	if (showError) {
-		uni.showToast({
-			title: error || message,
-			duration: 2000
-		});
-	}
-	return Promise.reject(data)
-
+	const { networkType } = await checkNetwork.checkNetworkStatus().catch(() => { })
+	data.networkType = networkType
+	return Promise.resolve(data)
 	// 接收请求，执行响应操作
 	// 您的逻辑......
 

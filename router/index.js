@@ -12,7 +12,7 @@ const router = new Router({
 //全局路由前置守卫
 router.beforeEach((to, from, next) => {
     const token = Vue.prototype.$cache.get('token') || null
-    if (to.meta.auth && !token) {
+    if (to.meta?.auth && !token) {
         next('/pages/login/index')
         return
     }

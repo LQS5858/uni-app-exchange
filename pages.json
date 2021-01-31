@@ -1,7 +1,8 @@
 {
 	"pages": [
 		{
-			"path": "pages/main/index"
+			"path": "pages/main/index",
+			"style": {}
 		},
 		{
 			"path": "pages/test/test",

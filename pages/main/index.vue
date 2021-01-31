@@ -1,8 +1,7 @@
 <template>
-  <root-view>
-    <scroll-view :scroll-y="true"
-                 class="home-wrap">
-      <!-- <image src=""></image> -->
+  <root-view :networkType="true">
+
+    <view class="home-wrap">
       <swiper class="swiper"
               :indicator-dots="indicatorDots"
               :autoplay="autoplay"
@@ -106,32 +105,40 @@
                          size="10"></uni-icons>
             </view>
           </view>
-          <view class="recommend-market-content ">
-            <view class="content">
-              <view class="header flex">
-                <text>币对</text>
-                <text>涨跌幅</text>
-              </view>
-              <view class="row flex">
-                <view class="left flex-column">
-                  <text class="symbol">{{marketFormat&&marketFormat[0]&&marketFormat[0]['symbol']}}</text>
-                  <text class="volume">24H量</text>
-                  <text class="volume">{{marketFormat&&marketFormat[0]&&marketFormat[0]['volume']}}</text>
+          <view>
+            <public-load @onRefresh="onRefresh"
+                         ref="publicLoad">
+              <view class="recommend-market-content "
+                    style="height:200px">
+                <view class="content">
+                  <view class="header flex">
+                    <text>币对</text>
+                    <text>涨跌幅</text>
+                  </view>
+                  <view class="row flex">
+                    <view class="left flex-column">
+                      <text class="symbol">{{marketFormat&&marketFormat[0]&&marketFormat[0]['symbol']}}</text>
+                      <text class="volume">24H量</text>
+                      <text class="volume">{{marketFormat&&marketFormat[0]&&marketFormat[0]['volume']}}</text>
+                    </view>
+                    <view class="right flex-column">
+                      <text class="rose">{{marketFormat&&marketFormat[0]&&marketFormat[0]['rose']}}</text>
+                      <text class="price">{{marketFormat&&marketFormat[0]&&marketFormat[0]['_price']}}</text>
+                    </view>
+                    <view @tap="$Router.push('/pages/test/test')">跳转</view>
+                  </view>
                 </view>
-                <view class="right flex-column">
-                  <text class="rose">{{marketFormat&&marketFormat[0]&&marketFormat[0]['rose']}}</text>
-                  <text class="price">{{marketFormat&&marketFormat[0]&&marketFormat[0]['_price']}}</text>
-                </view>
-                <view @tap="$Router.push('/pages/test/test')">跳转</view>
               </view>
-            </view>
+
+            </public-load>
           </view>
         </view>
       </list-network>
-    </scroll-view>
+    </view>
   </root-view>
 </template>
 <script>
+
 import subMarket from '@/assets/mixins/subMarket'
 import WybNoticeBar from '@/components/wyb-noticeBar/wyb-noticeBar.vue'
 import { mapState } from 'vuex'
@@ -141,6 +148,9 @@ export default {
   name: "home",
   data () {
     return {
+      contentText: {
+        contentnomore: '底线'
+      },
       broadcastData: [],
       bannerList: [],
       indicatorDots: true,
@@ -175,6 +185,12 @@ export default {
 
   },
   methods: {
+    onRefresh () {
+      console.log('>>开始下拉刷新');
+      setTimeout(() => {
+        this.$refs['publicLoad'].onRestore()
+      }, 6000);
+    },
     async fetchBannerList (showError) {
       const params = {
         data: {
@@ -193,14 +209,17 @@ export default {
           size: 10
         }
       }
-      const arr = await Promise.allSettled([this.$http.post(homeApi.bannerListApi, params, { showError }), this.$http.post(homeApi.noticeApi, noticeParams, { showError })]).catch(() => {
+      const [{ value: bannerRes, status: bannerStatus }, { value: noticeRes, status: noticeStatus }] = await Promise.allSettled([this.$http.post(homeApi.bannerListApi, params), this.$http.post(homeApi.noticeApi, noticeParams)]).catch(() => {
+      });
+      if (bannerStatus === 'rejected' || noticeStatus === 'rejected') {
         const id = setTimeout(() => {
           this.fetchBannerList()
           clearTimeout(id)
         }, 5000);
-      });
-      ({ value: this.bannerList } = arr?.[0] || {})
-      const { rows } = arr?.[1]?.value || {}
+      }
+      ({ data: this.bannerList } = bannerRes || {})
+      const { data } = noticeRes || {}
+      const { rows } = data || {}
       this.initList(rows)
     },
     initList (list) {

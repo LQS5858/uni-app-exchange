@@ -44,8 +44,15 @@ export default {
       this.$bus.init(socketUrl)
     },
     async initRateMarket (symbolList, coinList) {
-      const data = await Promise.all([this.$http.get('v1/balance/findAllRate'), this.$http.get('v1/exchange/ticker/findAll')])
-      const [rate, ticker] = data || []
+      const [rateRes, tickerRes] = await Promise.all([this.$http.get('v1/balance/findAllRate'), this.$http.get('v1/exchange/ticker/findAll')])
+      const { success, data: rate } = rateRes || {}
+      const { data: ticker, success: tickerSuccess } = tickerRes || {}
+      if (!success || !tickerSuccess) {
+        const id = setTimeout(() => {
+          this.initRateMarket(symbolList, coinList)
+          clearTimeout(id)
+        }, 5000);
+      }
       this.$store.commit('SAVE_RATE', rate)
       this.initMarket(ticker, symbolList, coinList)
       this.subRate(rate)

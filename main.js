@@ -12,6 +12,7 @@ import ListNetWork from "@/components/com/list-network";
 import _ from 'lodash'
 import Utils from '@/utils'
 import { RouterMount } from 'uni-simple-router'
+import PublicLoad from '@/components/com/public-load'
 // #ifdef H5
 import RippleDirective from 'vue-ripple-directive'
 import Directives from '@/directives'
@@ -23,6 +24,7 @@ Vue.component('bt-custom', cuCustom)
 Vue.use(cache)
 Vue.use(ListNetWork)
 Vue.use(RootView)
+Vue.use(PublicLoad)
 
 
 Vue.config.productionTip = false
